@@ -1,8 +1,6 @@
 package com.itechart.projects.contactDirectory.model.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.sql.Date;
 
 public class Contact extends Entity{
 
@@ -10,7 +8,7 @@ public class Contact extends Entity{
     private String name;
     private String surname;
     private String patronymic;
-    private GregorianCalendar dob;
+    private Date dob;
     private char gender;
     private String nationality;
     private String familyState;
@@ -20,7 +18,7 @@ public class Contact extends Entity{
     private String city;
     private String streetHouseRoom;
     private String email;
-
+    
     public Contact() {
     }
 
@@ -48,11 +46,11 @@ public class Contact extends Entity{
         this.patronymic = patronymic;
     }
 
-    public GregorianCalendar getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(GregorianCalendar dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 
