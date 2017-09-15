@@ -1,0 +1,60 @@
+#wrap{
+    display: none;
+    opacity: 0.8;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 16px;
+    background-color: rgba(1, 1, 1, 0.725);
+    z-index: 100;
+    overflow: auto;
+}
+
+#popupPhone {
+    width: 400px;
+    height: 470px;
+    margin: 50px auto;
+    display: none;
+    background: #fff;
+    z-index: 200;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 16px;
+}
+
+#popupAttachment {
+    width: 400px;
+    height: 370px;
+    margin: 50px auto;
+    display: none;
+    background: #fff;
+    z-index: 200;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 16px;
+}
+
+input.form-control {
+    padding-bottom: 10px;
+}
+
+#comment {
+    padding-bottom: 15px;
+}
+
+input.form-control {
+    padding: 5px;
+    padding-left: 0px;
+}
+
+div.form-actions {
+    padding-top: 10px;
+}

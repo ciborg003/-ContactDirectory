@@ -1,0 +1,52 @@
+header {
+    text-align: justify;
+    letter-spacing: 1px;
+    height: 8em;
+    padding: 2em 10%;
+    background: #2c3e50;
+    color: #fff;
+}
+
+header h1,
+header nav {
+    display: inline-block;
+}
+
+#save{
+    padding-bottom: 20px;
+}
+
+div.input-group{
+    padding-bottom: 15px;
+}
+
+#form {
+    padding: 20px;
+}
+
+#editingPhones {
+    padding: 30px;
+}
+
+thead{
+    background-color: #0b0f16;
+    color: white;
+}
+
+#phoneActions{
+    float: right;
+    padding-bottom: 5px;
+}
+
+#editingAttachments {
+    padding: 30px;
+}
+
+#attachmentActions{
+    float: right;
+    padding: 5px;
+}
+
+div.container-fluid{
+    padding: 5px;
+}

@@ -1,0 +1,10 @@
+.ctrlBtn {
+    padding-right: 10px;
+    float: right;
+    position: relative;
+}
+
+.header {
+    background: #3f4b51;
+    position: relative;
+}
