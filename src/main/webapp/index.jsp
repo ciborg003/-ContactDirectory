@@ -4,10 +4,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!--<link type="text/javascript" href="../js/index.js">-->
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="css/index.css">
-        <link rel="stylesheet" type="text/css" href="css/editing.css"
-              <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/editing.css">
+        <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
         <title>User page</title>
     </head>
     <body>
@@ -22,17 +23,19 @@
             </div>
         </header>
 
-        <h6>Record on the page:</h6>
-        <select>
-            <option>10</option>
-            <option>20</option>
-        </select>
+        <form method="GET" action="ServletController">
+            <h6>Record on the page:</h6>
+            <select name="" id="recordsOnPage" onchange="calcPagesAmount(${recordsCount});">
+                <option>10</option>
+                <option>20</option>
+            </select>
 
-        <h6>Page:</h6>
-        <select>
-            <option>10</option>
-            <option>20</option>
-        </select>
+            <h6>Page:</h6>
+            <select id="pagesCount">
+            </select>
+            
+            <input type="submit" value="Go">
+        </form>
 
         <div class="ctrlBtn btn-group">
             <a href="http://localhost:8080/ServletController/editing.jsp">
@@ -43,7 +46,7 @@
         <div class="container" id="table">
             <table class="table table-bordered">
                 <c:forEach var="contact" items="${contactList}">
-                    <tr>
+                    <tr data-idContact = "${contact.id}">
                         <td valign><input type="checkbox"></td>
                         <td>
                             <a href="#">Full Name: ${contact.name} ${contact.surname}  
@@ -61,6 +64,10 @@
                 </c:forEach>
             </table>
         </div>
+        <script src="js/index.js"></script>
+        <script type="text/javascript">
+            calcPagesAmount(${recordsCount});
+        </script>
     </body>
 </html>
 
