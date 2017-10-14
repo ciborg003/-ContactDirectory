@@ -1,6 +1,8 @@
 package com.itechart.projects.contactDirectory.model.entity;
 
 import java.sql.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Contact extends Entity{
 
@@ -9,15 +11,24 @@ public class Contact extends Entity{
     private String surname;
     private String patronymic;
     private Date dob;
-    private char gender;
+    private EnumGender gender;
     private String nationality;
-    private String familyState;
+    private EnumFamilyState familyState;
     private String webSite;
     private String job;
     private String country;
     private String city;
     private String streetHouseRoom;
+    private String indexNumber;
     private String email;
+
+    public String getIndexNumber() {
+        return indexNumber;
+    }
+
+    public void setIndexNumber(String indexNumber) {
+        this.indexNumber = indexNumber;
+    }
     
     public Contact() {
     }
@@ -54,14 +65,6 @@ public class Contact extends Entity{
         this.dob = dob;
     }
 
-    public char getGender() {
-        return gender;
-    }
-
-    public void setGender(char gender) {
-        this.gender = gender;
-    }
-
     public String getNationality() {
         return nationality;
     }
@@ -70,11 +73,19 @@ public class Contact extends Entity{
         this.nationality = nationality;
     }
 
-    public String getFamilyState() {
+    public EnumGender getGender() {
+        return gender;
+    }
+
+    public void setGender(EnumGender gender) {
+        this.gender = gender;
+    }
+
+    public EnumFamilyState getFamilyState() {
         return familyState;
     }
 
-    public void setFamilyState(String familyState) {
+    public void setFamilyState(EnumFamilyState familyState) {
         this.familyState = familyState;
     }
 

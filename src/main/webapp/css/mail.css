@@ -1,0 +1,24 @@
+.input-email {
+    background-color: yellow;
+    display: inline-block;
+}
+
+li {
+    position: relative;
+    left: 0;
+    right: 0;
+    background-color: red;
+}
+
+.button-add {
+   float: right;
+}
+
+p{
+    display: inline-block;
+    vertical-align: central;
+}
+
+.row {
+    padding-bottom: 10px;
+}

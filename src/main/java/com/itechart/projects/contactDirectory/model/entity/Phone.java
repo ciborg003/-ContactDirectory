@@ -2,24 +2,25 @@ package com.itechart.projects.contactDirectory.model.entity;
 
 import java.io.Serializable;
 
-public class Phones extends Entity{
+public class Phone extends Entity{
 
     private static final long serialVersionUID = 1L;
     private String countryCode;
     private String operatorCode;
     private String phoneNumber;
-    private String phoneType;
-    private int idContact;
+    private EnumPhoneType phoneType;
+    private Integer idContact;
     private String comment;
 
-    public Phones() {
+    public Phone() {
     }
 
-    public Phones(Integer idPhones) {
+    public Phone(Integer idPhones) {
         super(idPhones);
     }
 
-    public Phones(Integer idPhones, String countryCode, String operatorCode, String phoneNumber, String phoneType, int idContact) {
+    public Phone(Integer idPhones, String countryCode, String operatorCode, 
+            String phoneNumber, EnumPhoneType phoneType, int idContact) {
         super(idPhones);
         this.countryCode = countryCode;
         this.operatorCode = operatorCode;
@@ -52,14 +53,14 @@ public class Phones extends Entity{
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhoneType() {
+    public EnumPhoneType getPhoneType() {
         return phoneType;
     }
 
-    public void setPhoneType(String phoneType) {
+    public void setPhoneType(EnumPhoneType phoneType) {
         this.phoneType = phoneType;
     }
-
+    
     public int getIdContact() {
         return idContact;
     }
@@ -86,10 +87,10 @@ public class Phones extends Entity{
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Phones)) {
+        if (!(object instanceof Phone)) {
             return false;
         }
-        Phones other = (Phones) object;
+        Phone other = (Phone) object;
         if ((this.getId() == null && other.getId() != null) || 
                 (this.getId() != null && !this.getId().equals(other.getId()))) {
             return false;

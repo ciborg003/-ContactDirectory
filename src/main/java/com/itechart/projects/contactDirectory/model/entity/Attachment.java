@@ -1,29 +1,33 @@
 package com.itechart.projects.contactDirectory.model.entity;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 public class Attachment extends Entity{
 
     private static final long serialVersionUID = 1L;
-    private String fileURL;
+    private String url;
     private int idContact;
+    private Date loadDate;
     private String comment;
 
     public Attachment() {
     }
 
-    public Attachment(Integer idAttachment, String fileURL, int idContact) {
-        super(idAttachment);
-        this.fileURL = fileURL;
-        this.idContact = idContact;
+    public Date getLoadDate() {
+        return loadDate;
     }
 
-    public String getFileURL() {
-        return fileURL;
+    public void setLoadDate(Date loadDate) {
+        this.loadDate = loadDate;
     }
 
-    public void setFileURL(String fileURL) {
-        this.fileURL = fileURL;
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public int getIdContact() {
@@ -50,20 +54,9 @@ public class Attachment extends Entity{
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Attachment)) {
-            return false;
-        }
-        Attachment other = (Attachment) object;
-        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
-            return false;
-        }
-        return true;
+    public String toString() {
+        return "Attachment{" + "url=" + url + ", idContact=" + idContact + ", comment=" + comment + '}';
     }
 
-    @Override
-    public String toString() {
-        return "Attachment{" + "fileURL=" + fileURL + ", idContact=" + idContact + ", comment=" + comment + '}';
-    }
+    
 }

@@ -1,20 +1,18 @@
-/*header {
+header {
     text-align: justify;
     letter-spacing: 1px;
     height: 8em;
     padding: 2em 10%;
     background: #2c3e50;
     color: #fff;
-}*/
-
-#form{
-    padding: 20px;
 }
 
-div.input-group {
-    padding-bottom: 15px;
+header h1{
+    display: inline-block;
 }
 
-#search{
-    padding-bottom: 15px;
+.ctrlBtn {
+    padding-right: 10px;
+    float: right;
+    position: relative;
 }

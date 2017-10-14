@@ -4,70 +4,70 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <!--<link type="text/javascript" href="../js/index.js">-->
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <link rel="stylesheet" type="text/css" href="css/editing.css">
         <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/navbar.css">
+        <link rel="stylesheet" type="text/css" href="css/header.css">
         <title>User page</title>
     </head>
     <body>
-        <header class="page-header">
-            <h1>Contact Directory</h1>
-            <div class="ctrlBtn">
-                <a href="http://localhost:8080/ServletController/search.jsp">
-                    <button class="btn btn-search" type="button">
-                        <i class="fa fa-search fa-fw"></i> Search
-                    </button>
-                </a>
-            </div>
-        </header>
+        <!--        <header class="page-header">
+                    <h1>Contact Directory</h1>
+                    <div class="ctrlBtn">
+                        <button class="btn btn-search" type="button" onclick="searchPage()">
+                            <span class="fa fa-search" />Search
+                        </button>
+                    </div>
+                </header>-->
+        <jsp:include page="navbar.jsp" />
 
-        <form method="GET" action="ServletController">
+        <form id="contacts" action="ServletController" method="GET">
+            <input type="hidden" name="action" value="${action}">
             <h6>Record on the page:</h6>
-            <select name="" id="recordsOnPage" onchange="calcPagesAmount(${recordsCount});">
+            <select name="recordsOnPage" id="recordsOnPage" 
+                    onchange="calcPagesAmount(${recordsCount});">
                 <option>10</option>
                 <option>20</option>
             </select>
 
             <h6>Page:</h6>
-            <select id="pagesCount">
+            <select name="pageNumber" id="pagesCount">
             </select>
-            
-            <input type="submit" value="Go">
-        </form>
+            <button type="button" class="btn btn-sm" onclick="changePage()">Go</button>
 
-        <div class="ctrlBtn btn-group">
-            <a href="http://localhost:8080/ServletController/editing.jsp">
-                <button class="btn btn-info">Add</button>
-            </a>
-            <button class="btn btn-info">Send mail</button>
-        </div>
-        <div class="container" id="table">
-            <table class="table table-bordered">
-                <c:forEach var="contact" items="${contactList}">
-                    <tr data-idContact = "${contact.id}">
-                        <td valign><input type="checkbox"></td>
-                        <td>
-                            <a href="#">Full Name: ${contact.name} ${contact.surname}  
-                                ${contact.patronymic}</a>
-                            <h6>Birthday: ${contact.dob}</h6>
-                            <h6>Current job: ${contact.job}</h6>
-                        </td>
-                        <td>
-                            <div class="ctrlBtn btn-group">
-                                <button class="btn btn-info">Edit</button>
-                                <button class="btn btn-info">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
+            <div class="container" id="table">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" onclick="addNewContact()">Add</button>
+                    <button class="btn btn-info" type="button" onclick="sendMails()">Send mail</button>
+                    <button class="btn btn-info" type="button" onclick="deleteContact()()">Delete</button>
+                </div>
+                <table class="table table-bordered">
+                    <c:forEach var="contact" items="${contactList}">
+                        <tr id="${contact.id}">
+                            <td valign><input type="checkbox" onchange="checkBoxAction(this)"></td>
+                            <td>
+                                <a href="?action=updateContact&contactID=${contact.id}">Full Name: ${contact.name} ${contact.surname}  
+                                    ${contact.patronymic}</a>
+                                <h6>Birthday: ${contact.dob}</h6>
+                                <h6>Current job: ${contact.job}</h6>
+                            </td>
+                            <td>
+                                <div class="ctrlBtn btn-group">
+                                    <button class="btn btn-info" 
+                                            onclick="editContact(this)">Edit</button>
+                                    <button class="btn btn-info" onclick="deleteContact(this)">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </div>
+        </form>
         <script src="js/index.js"></script>
         <script type="text/javascript">
-            calcPagesAmount(${recordsCount});
+                                        loadPage(${recordsCount},${pageNumber},${recordsOnPage});
         </script>
     </body>
 </html>
-

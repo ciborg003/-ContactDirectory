@@ -1,6 +1,6 @@
 #wrap{
     display: none;
-    opacity: 0.8;
+    opacity: 0.95;
     position: fixed;
     left: 0;
     right: 0;
@@ -12,9 +12,13 @@
     overflow: auto;
 }
 
+#popupPhone #popUpAction {
+    border-radius: 3px;
+}
+
 #popupPhone {
     width: 400px;
-    height: 470px;
+    height: 370px;
     margin: 50px auto;
     display: none;
     background: #fff;
@@ -29,7 +33,7 @@
 
 #popupAttachment {
     width: 400px;
-    height: 370px;
+    height: 400px;
     margin: 50px auto;
     display: none;
     background: #fff;

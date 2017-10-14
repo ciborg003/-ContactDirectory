@@ -1,4 +1,4 @@
-header {
+/*header {
     text-align: justify;
     letter-spacing: 1px;
     height: 8em;
@@ -10,7 +10,7 @@ header {
 header h1,
 header nav {
     display: inline-block;
-}
+}*/
 
 #save{
     padding-bottom: 20px;
@@ -26,6 +26,7 @@ div.input-group{
 
 #editingPhones {
     padding: 30px;
+    padding-left: 0px;
 }
 
 thead{
@@ -40,6 +41,7 @@ thead{
 
 #editingAttachments {
     padding: 30px;
+    padding-left: 0px;
 }
 
 #attachmentActions{
