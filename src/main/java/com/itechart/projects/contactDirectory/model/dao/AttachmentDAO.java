@@ -29,8 +29,9 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
 
             statement.setDate(1, attachment.getLoadDate());
             statement.setString(2, attachment.getUrl());
-            statement.setInt(3, attachment.getIdContact());
-            statement.setString(4, attachment.getComment());
+            statement.setString(3, attachment.getFileName());
+            statement.setInt(4, attachment.getIdContact());
+            statement.setString(5, attachment.getComment());
 
             ResultSet genKey = statement.executeQuery();
             if (genKey.next()) {
@@ -58,7 +59,8 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             a.setId(resultSet.getInt(1));
             a.setLoadDate(resultSet.getDate(2));
             a.setUrl(resultSet.getString(3));
-            a.setComment(resultSet.getString(4));
+            a.setFileName(resultSet.getString(4));
+            a.setComment(resultSet.getString(5));
             a.setIdContact(contact.getId());
 
             list.add(a);
@@ -73,8 +75,9 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
         statement.setInt(1, attachment.getId());
         statement.setDate(2, attachment.getLoadDate());
         statement.setString(3, attachment.getUrl());
-        statement.setInt(4, attachment.getIdContact());
-        statement.setString(5, attachment.getComment());
+        statement.setString(4, attachment.getFileName());
+        statement.setInt(5, attachment.getIdContact());
+        statement.setString(6, attachment.getComment());
     }
     
     public Attachment getAttachmentByID(Integer id){
@@ -90,9 +93,10 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
                 attachment = new Attachment();
                 attachment.setId(id);
                 attachment.setUrl(resultSet.getString(1));
-                attachment.setLoadDate(resultSet.getDate(2));
-                attachment.setIdContact(resultSet.getInt(3));
-                attachment.setComment(resultSet.getString(4));
+                attachment.setFileName(resultSet.getString(2));
+                attachment.setLoadDate(resultSet.getDate(3));
+                attachment.setIdContact(resultSet.getInt(4));
+                attachment.setComment(resultSet.getString(5));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

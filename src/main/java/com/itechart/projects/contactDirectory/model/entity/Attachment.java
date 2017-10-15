@@ -10,10 +10,19 @@ public class Attachment extends Entity{
     private int idContact;
     private Date loadDate;
     private String comment;
+    private String fileName;
 
     public Attachment() {
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    
     public Date getLoadDate() {
         return loadDate;
     }

@@ -237,8 +237,3 @@ function downloadFile(button) {
     form.appendChild(attachmentID);
     form.submit();
 }
-
-function checkEmail(email){
-    email.match("^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$");
-    alert()
-}

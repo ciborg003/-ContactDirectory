@@ -28,7 +28,6 @@ public class ServletController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         process(request, response);
 
     }

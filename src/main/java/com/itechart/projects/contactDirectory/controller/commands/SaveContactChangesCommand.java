@@ -19,9 +19,7 @@ public class SaveContactChangesCommand extends CommandProcess {
         try {
             processPhones(request, response);
             processAttachments(request, response);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
+        } catch (SQLException | IOException ex) {
             ex.printStackTrace();
         }
         try {
@@ -31,11 +29,7 @@ public class SaveContactChangesCommand extends CommandProcess {
         }
         try {
             processRequest(request, response);
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        } catch (ServletException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
+        } catch (NamingException | ServletException | IOException ex) {
             ex.printStackTrace();
         }
     }

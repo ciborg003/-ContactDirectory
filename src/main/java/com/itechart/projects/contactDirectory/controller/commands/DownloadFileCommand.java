@@ -16,14 +16,14 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class DownloadFileCommand extends CommandProcess{
+public class DownloadFileCommand extends CommandProcess {
 
     public DownloadFileCommand() throws SQLException {
     }
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
-        
+
         DbxUser user = new DbxUser("dT7ZKCx7PaAAAAAAAAAAE0sl7jeJg6OVPMVrN_gxY0-Dwqt4-DGElb1LNxCXAcC8");
         DbxService service = null;
         try {
@@ -31,10 +31,10 @@ public class DownloadFileCommand extends CommandProcess{
         } catch (DbxException ex) {
             ex.printStackTrace();
         }
-        
+
         int attachmentID = Integer.parseInt(request.getParameter("attachmentID"));
         Attachment attachment = null;
-        
+
         try {
             attachment = new AttachmentDAO().getAttachmentByID(attachmentID);
         } catch (SQLException ex) {
@@ -52,8 +52,14 @@ public class DownloadFileCommand extends CommandProcess{
         }
         System.out.println(service.isExists(path));
         response.setContentType("application/download;");
-        response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
-        service.readFile(path, out);
+        try {
+            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+        if (service.isExists(path)) {
+            service.readFile(path, out);
+        }
     }
-    
+
 }

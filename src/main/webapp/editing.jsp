@@ -276,7 +276,7 @@
                         <input type="hidden" name="loadDate" value="${attachment.loadDate}">
                         <input type="hidden" name="comment" value="${attachment.comment}">
                         <td>
-                            <button class="btn btn-info" onclick="downloadFile(this)"><span class="glyphicon glyphicon-download"></span> ${attachment.url}</button>
+                            <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="glyphicon glyphicon-download"></span> ${attachment.url}</button>
                         </td>
                         <td><h6>${attachment.loadDate}</h6></td>
                         <td><h6>${attachment.comment}</h6></td>
