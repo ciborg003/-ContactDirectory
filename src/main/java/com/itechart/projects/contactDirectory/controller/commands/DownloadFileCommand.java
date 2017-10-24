@@ -5,11 +5,13 @@ import com.itechart.projects.contactDirectory.model.dao.AttachmentDAO;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
 import com.itechart.projects.contactDirectory.model.entity.Attachment;
+import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletOutputStream;
@@ -18,48 +20,39 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DownloadFileCommand extends CommandProcess {
 
+    private static final String DBX_PROPERTY = "DropBox";
+
     public DownloadFileCommand() throws SQLException {
     }
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
 
-        DbxUser user = new DbxUser("dT7ZKCx7PaAAAAAAAAAAE0sl7jeJg6OVPMVrN_gxY0-Dwqt4-DGElb1LNxCXAcC8");
+        ResourceBundle bundle = ResourceBundle.getBundle(DBX_PROPERTY);
+        DbxUser user = new DbxUser(bundle.getString("token"));
+        user.setUsername(bundle.getString("username"));
         DbxService service = null;
         try {
             service = new DbxService(user);
-        } catch (DbxException ex) {
-            ex.printStackTrace();
-        }
-
-        int attachmentID = Integer.parseInt(request.getParameter("attachmentID"));
-        Attachment attachment = null;
-
-        try {
+            
+            int attachmentID = Integer.parseInt(request.getParameter("attachmentID"));
+            Attachment attachment = null;
+            
             attachment = new AttachmentDAO().getAttachmentByID(attachmentID);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            ServletOutputStream out = response.getOutputStream();
+        
+            response.setContentType("application/download;");
+            
+            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(attachment.getFileName(), "UTF-8"));
+            response.addHeader("Content-Length", "" + service.getSize(attachment.getUrl()));
+            
+            if (service.isExists(attachment.getUrl())) {
+            service.readFile(attachment.getUrl(), out);
         }
-        String path = attachment.getUrl();
-        System.out.println("FilePATH: " + path);
-        String fileName = Paths.get(path).getFileName().toString();
-        System.out.println("FileName: " + fileName);
-        ServletOutputStream out = null;
-        try {
-            out = response.getOutputStream();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (DbxException | DAOException | IOException ex) {
+            LOGGER.error(ex.getMessage());
         }
-        System.out.println(service.isExists(path));
-        response.setContentType("application/download;");
-        try {
-            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
-        }
-        if (service.isExists(path)) {
-            service.readFile(path, out);
-        }
+
     }
 
 }

@@ -34,7 +34,7 @@ public class GetSearchPageCommand extends CommandProcess{
         try {
             request.getRequestDispatcher("search.jsp").forward(request, response);
         } catch (ServletException | IOException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
     

@@ -1,4 +1,21 @@
 var phoneRaw;
+var selectedPhoneRows = [];
+var fileForms = [];
+
+function deleteElementFromArray(arr, el) {
+    //1
+    for (var i = 0; i < arr.length; i++) {
+        //2
+        if (arr[i] === el) {
+            //3
+            arr = arr.slice(0, i).concat(arr.slice(i + 1, arr.length));
+        }
+        //4
+    }
+    //5
+    return arr;
+}
+//--------------PHONE_ACTIONS------------------------------
 
 function showPhonePopup(state) {
     document.getElementById("wrap").style.display = state;
@@ -8,12 +25,7 @@ function showPhonePopup(state) {
     document.getElementById("oCode").value = '';
     document.getElementById("pNumber").value = '';
     document.getElementById("mobileType").checked = 'true';
-    document.getElementById("comment").value = "";
-}
-
-function showAttachmentPopup(state) {
-    document.getElementById("wrap").style.display = state;
-    document.getElementById("popupAttachment").style.display = state;
+    document.getElementById("phoneComment").value = "";
 }
 
 function savePhone(button) {
@@ -45,13 +57,17 @@ function savePhone(button) {
     var inputAction, inputPNumber, inputComment, inputPType;
     var td1, td2, td3, td4, td5;
 
-    if (document.getElementById("popUpAction").value == 'create') {
+    if (document.getElementById("popUpAction").value === 'create') {
         tr = document.createElement("TR");
 
         inputAction = document.createElement("INPUT");
         inputPNumber = document.createElement("INPUT");
         inputComment = document.createElement("INPUT");
         inputPType = document.createElement("INPUT");
+        var inputPhoneID = document.createElement("INPUT");
+        inputPhoneID.name = 'phoneID';
+        inputPhoneID.type = 'hidden';
+        inputPhoneID. value = 'null'; 
 
         td1 = document.createElement("TD");
         td2 = document.createElement("TD");
@@ -65,7 +81,7 @@ function savePhone(button) {
         inputPNumber.type = "hidden";
         inputPNumber.name = "phoneNumber";
         inputComment.type = "hidden";
-        inputComment.name = "comment";
+        inputComment.name = "phoneComment";
         inputPType.type = "hidden";
         inputPType.name = "phoneType";
 
@@ -73,6 +89,7 @@ function savePhone(button) {
         tr.appendChild(inputPNumber);
         tr.appendChild(inputComment);
         tr.appendChild(inputPType);
+        tr.appendChild(inputPhoneID);
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td3);
@@ -91,7 +108,7 @@ function savePhone(button) {
         inputPType = tr.getElementsByTagName('INPUT')[3];
         inputAction = tr.getElementsByTagName('INPUT')[0];
 
-        if (inputAction.value != 'create') {
+        if (inputAction.value !== 'create') {
             inputAction.value = 'update';
         }
 
@@ -110,7 +127,9 @@ function savePhone(button) {
     } else {
         inputPType.value = "Home";
     }
-    td1.innerHTML = "<input type='checkbox'>";
+    td1.innerHTML = "<label class='custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0'>"
+            + "<input type='checkbox' class='custom-control-input' onchange='checkBoxPhoneAction(this)'>"
+            + "<span class='custom-control-indicator'></span></label>";
     td2.innerHTML = "<h6>" + inputPNumber.value + "</h6>";
     if (isMobile) {
         td3.innerHTML = "<h6>Mobile</h6>";
@@ -118,7 +137,9 @@ function savePhone(button) {
         td3.innerHTML = "<h6>Home</h6>";
     }
     td4.innerHTML = "<h6>" + comment + "</h6>";
-    td5.innerHTML = "<div class='ctrlBtn btn-group'><button type='button' class='btn btn-info btn-md' onclick='editPhone(this)'>Edit</button><button class='btn btn-info'>Delete</button></div>";
+    td5.innerHTML = "<div class='ctrlBtn btn-group'>"
+            + "<button type='button' class='btn btn-info btn-md' onclick='editPhone(this)'>"
+            + "Edit</button><button type='button' class='btn btn-info' onclick='deletePhone(this)'>Delete</button></div>";
     inputAction = null;
     phoneRaw = null;
     showPhonePopup('none');
@@ -138,12 +159,12 @@ function editPhone(button) {
     document.getElementById("cCode").value = cCode;
     document.getElementById("oCode").value = oCode;
     document.getElementById("pNumber").value = pNumber;
-    if (inputs[3].value == 'Mobile') {
+    if (inputs[3].value === 'Mobile') {
         document.getElementById("mobileType").checked = 'true';
     } else {
         document.getElementById("homeType").checked = 'true';
     }
-    document.getElementById("comment").value = inputs[2].value;
+    document.getElementById("phoneComment").value = inputs[2].value;
 }
 
 function createPhone() {
@@ -151,38 +172,235 @@ function createPhone() {
     document.getElementById("popUpAction").value = 'create';
 }
 
+function checkBoxPhoneAction(checkBox) {
+    if (checkBox.checked) {
+        //3
+        selectedPhoneRows.push(checkBox.parentElement.parentElement.parentElement);
+    } else {
+        //4
+        selectedPhoneRows = deleteElementFromArray(selectedPhoneRows,
+                checkBox.parentElement.parentElement.parentElement);
+    }
+}
+
+function deletePhone(btn) {
+    var tr = btn.parentElement.parentElement.parentElement;
+
+    if (tr.getElementsByTagName('input')[0].value === 'create') {
+        tr.parentElement.removeChild(tr);
+    } else {
+        tr.getElementsByTagName('input')[0].value = 'delete';
+        tr.style.display = 'none';
+    }
+}
+
+function deletePhones() {
+    if (selectedPhoneRows.length < 1) {
+        alert("Check Some Contacts");
+        return;
+    }
+
+    for (var i = 0; i < selectedPhoneRows.length; i++) {
+        if (selectedPhoneRows[i]) {
+            if (selectedPhoneRows[i].getElementsByTagName('input')[0] === 'create') {
+                selectedPhoneRows[i].parentElement.removeChild(selectedPhoneRows[i]);
+            } else {
+                alert(selectedPhoneRows[i].getElementsByTagName('input')[0].value);
+                selectedPhoneRows[i].getElementsByTagName('input')[0].value = 'delete';
+                selectedPhoneRows[i].style.display = 'none';
+            }
+        }
+    }
+}
+
+
+//---------------ATACHMENTS_ACTIONS---------------------------------
+function showAttachmentPopup(state) {
+    
+    document.getElementById("wrap").style.display = state;
+    document.getElementById("popupAttachment").style.display = state;
+
+    document.getElementById('file').value = '';
+    document.getElementById('attachmentComment').value = '';
+}
+
 function saveAttachment() {
     var now = new Date();
 
-    var file = document.getElementById("file").value;
+    var file = document.getElementById("file");
     var comment = document.getElementById("attachmentComment").value;
-//    if (!comment){
-//        comment = '';
-//    }
+    if (!file.value) {
+        document.getElementById("file").style.border = '1px solid red';
+        return;
+    }
 
-    var tr = document.createElement("TR");
-    var td1 = document.createElement("TD");
-    var td2 = document.createElement("TD");
-    var td3 = document.createElement("TD");
+    if (!comment) {
+        comment = '';
+    } else if (comment.length > 255) {
+        document.getElementById("attachmentComment").style.borderColor = 'red';
+        return;
+    }
 
-    td1.innerHTML = "<h6>" + file + "<\h6>";
-    td2.innerHTML = "<h6>" + now + "</h6>";
-    td3.innerHTML = "<h6>" + comment + "</h6>";
+    var tr;
+    var inputAction, inputLoadDate, inputComment;
+    var td0, td1, td2, td3, td4;
 
+
+    if (document.getElementById("popUpAction").value === 'create') {
+        if (file.value.trim().length < 1) {
+            alert('Please select any file...');
+            return;
+        }
+
+        inputAction = document.createElement("INPUT");
+        inputAction.type = 'hidden';
+        inputAction.name = 'attachmentAction';
+        inputAction.value = 'create';
+        inputLoadDate = document.createElement("INPUT");
+        inputLoadDate.type = 'hidden';
+        inputLoadDate.name = 'loadDate';
+        inputComment = document.createElement("INPUT");
+        inputComment.type = 'hidden';
+        inputComment.name = 'attachmentComment';
+
+        tr = document.createElement("TR");
+        td0 = document.createElement("TD");
+        td0.hidden = 'true';
+        td1 = document.createElement("TD");
+        td2 = document.createElement("TD");
+        td3 = document.createElement("TD");
+        td4 = document.createElement("TD");
+
+        tr.appendChild(inputAction);
+        tr.appendChild(inputLoadDate);
+        tr.appendChild(inputComment);
+        tr.appendChild(td0);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+
+        var table = document.getElementById("attachmentList");
+        table.appendChild(tr);
+
+//        inputFile.value = file.value;
+        inputLoadDate.value = now;
+        inputComment.value = comment;
+
+        td1.innerHTML = "<h6>" + file.value + "<\h6>";
+        td2.innerHTML = "<h6>" + now + "</h6>";
+        td3.innerHTML = "<h6>" + comment + "</h6>";
+        td4.innerHTML = "<div class='ctrlBtn btn-group'>"
+                + '<button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>'
+                + "<button class='btn btn-info' onclick='deleteAttachment(this)'>Delete</button>"
+                + "</div>"
+    } else {
+        tr = attachmentRaw;
+
+        inputAction = tr.getElementsByTagName('INPUT')[0];
+        inputLoadDate = tr.getElementsByTagName('INPUT')[1];
+        inputComment = tr.getElementsByTagName('INPUT')[2];
+
+        if (inputAction.value !== 'create') {
+            inputAction.value = 'edit';
+        }
+
+        td0 = tr.getElementsByTagName('td')[0];
+        td1 = tr.getElementsByTagName('td')[1];
+        td2 = tr.getElementsByTagName('td')[2];
+        td3 = tr.getElementsByTagName('td')[3];
+        td4 = tr.getElementsByTagName('td')[4];
+
+        if (file.value.trim().length > 0) {
+//            inputFile.value = file;
+            inputLoadDate.value = now;
+
+            td1.innerHTML = "<h6>" + file.value + "<\h6>";
+            td2.innerHTML = "<h6>" + now + "</h6>";
+        }
+
+
+        inputComment.value = comment;
+
+
+
+        td3.innerHTML = "<h6>" + comment + "</h6>";
+        td4.innerHTML = "<div class='ctrlBtn btn-group'>"
+                + '<button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>'
+                + "<button class='btn btn-info' onclick='deletePhone()'>Delete</button>"
+                + "</div>";
+    }
+    td0.innerHTML = "";
+    td0.appendChild(file);
+    file.removeAttribute('id');
+    
+    document.getElementById('select-file').innerHTML = "<label for='file'>Select file:</label>"
+                        + "<input type='file' id='file' name='data' class='form-control-file'>";
+
+    tr.appendChild(td0);
     tr.appendChild(td1);
     tr.appendChild(td2);
     tr.appendChild(td3);
+    tr.appendChild(td4);
 
-    var table = document.getElementById("attachmentList");
-    table.appendChild(tr);
-
+    attachmentRaw = null;
     showAttachmentPopup('none');
 }
 
+function editAttachment(button) {
+    showAttachmentPopup('block');
+
+    attachmentRaw = button.parentElement.parentElement.parentElement;
+    var inputs = attachmentRaw.getElementsByTagName('INPUT');
+
+    var file = inputs[1].value;
+    var comment = inputs[2].value;
+
+    document.getElementById("popUpAction").value = 'edit';
+    document.getElementById('file').value = file;
+    document.getElementById("attachmentComment").value = comment;
+}
+
+function createAttachment() {
+    showAttachmentPopup('block');
+    document.getElementById("popUpAction").value = 'create';
+}
+
+function deleteAttachment(btn) {
+    var tr = btn.parentElement.parentElement.parentElement;
+
+    if (tr.getElementsByTagName('input')[0].value === 'create') {
+        tr.parentElement.removeChild(tr);
+    } else {
+        tr.getElementsByTagName('input')[0].value = 'delete';
+        tr.style.display = 'none';
+    }
+}
+
+
+//----------------------------------------------------------------
+function changePhoto(){
+    var pattern = /\.(gif|jpg|jpeg|tiff|png)$/i;
+    
+    var photoSelect = document.getElementById('selectPhoto');
+    var result = photoSelect.value.match(pattern);
+    
+    if (!result){
+        alert('invalid image');
+        var newPhotoSelect = document.createElement('input');
+        newPhotoSelect.type = 'file';
+        newPhotoSelect.id = 'selectPhoto';
+        newPhotoSelect.name = 'selectPhoto';
+        newPhotoSelect.onchange = 'changePhoto()';
+        photoSelect = newPhotoSelect;
+        return;
+    }
+    
+    var photoAction = document.getElementById("photoAction");
+    photoAction.value = 'change';
+}
+
 function checkForm() {
-//    var flag = false;
-//    var msg = "";
-    alert("checkForm");
     document.form.submit();
 }
 
@@ -215,7 +433,6 @@ function getPhoneType(isMobile) {
 }
 
 function saveContact() {
-    var action = document.getElementsByName('action')[0];
     document.forms[0].submit();
 }
 
@@ -227,12 +444,12 @@ function downloadFile(button) {
     var inputAction = document.createElement('input');
     inputAction.name = 'action';
     inputAction.value = 'downloadFile';
-    
+
     var tr = button.parentElement.parentElement;
     var attachmentID = document.createElement('input');
     attachmentID.name = 'attachmentID';
     attachmentID.value = tr.id;
-            
+
     form.appendChild(inputAction);
     form.appendChild(attachmentID);
     form.submit();

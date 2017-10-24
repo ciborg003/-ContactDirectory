@@ -1,5 +1,6 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
+import com.itechart.projects.contactDirectory.model.dao.AttachmentDAO;
 import com.itechart.projects.contactDirectory.model.dao.ContactDAO;
 import com.itechart.projects.contactDirectory.model.dao.PhoneDAO;
 import com.itechart.projects.contactDirectory.model.entity.Contact;
@@ -7,32 +8,32 @@ import com.itechart.projects.contactDirectory.model.entity.EnumFamilyState;
 import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
+import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 
 public abstract class CommandProcess {
 
     protected ContactDAO contactDAO;
-    protected String propertyPath;
+    protected PhoneDAO phoneDAO;
+    protected AttachmentDAO attachmentDAO;
+    private Connection connection;
+    protected final static Logger LOGGER = Logger.getRootLogger();
 
-    public CommandProcess() throws SQLException {
-//        this.propertyPath = propertyPath;
-        this.contactDAO = new ContactDAO(ConnectionManager.getConnection());
+    public CommandProcess() {
+//        connection = ConnectionManager.getConnection();
+        this.contactDAO = new ContactDAO();
+        this.attachmentDAO = new AttachmentDAO();
+        this.phoneDAO = new PhoneDAO();
     }
 
     public abstract void execute(HttpServletRequest request, HttpServletResponse response);
@@ -45,14 +46,14 @@ public abstract class CommandProcess {
             contact.setId(Integer.parseInt(request.getParameter("contactId")));
         }
         if (request.getParameter("fName") != null
-                && request.getParameter("fName").trim().length() != 0) {
-            contact.setName(request.getParameter("fName"));
+                && request.getParameter("fName").trim().length() > 0) {
+            contact.setName( request.getParameter("fName"));
         }
         if (request.getParameter("lName") != null
                 && request.getParameter("lName").trim().length() != 0) {
             contact.setSurname(request.getParameter("lName"));
         }
-        if (request.getParameter("patronymic") != null
+        if (request.getAttribute("patronymic") != null
                 && request.getParameter("patronymic").trim().length() != 0) {
             contact.setPatronymic(request.getParameter("patronymic"));
         }
@@ -62,44 +63,44 @@ public abstract class CommandProcess {
             contact.setDob(new Date(Integer.parseInt(date[0]) - 1900,
                     Integer.parseInt(date[1]) - 1, Integer.parseInt(date[2])));
         }
-        if (request.getParameter("gender") != null
+        if (request.getAttribute("gender") != null
                 && request.getParameter("gender").trim().length() != 0) {
             contact.setGender(EnumGender.valueOf(request.getParameter("gender")));
         }
-        if (request.getParameter("nation") != null
+        if (request.getAttribute("nation") != null
                 && request.getParameter("nation").trim().length() != 0) {
             contact.setNationality(request.getParameter("nation"));
         }
-        if (request.getParameter("familyState") != null 
+        if (request.getAttribute("familyState") != null
                 && request.getParameter("familyState").trim().length() != 0) {
             contact.setFamilyState(EnumFamilyState.valueOf(request.getParameter("familyState")));
         }
-        if ((request.getParameter("webSite") != null)
+        if ((request.getAttribute("webSite") != null)
                 && request.getParameter("webSite").trim().length() != 0) {
             contact.setWebSite(request.getParameter("webSite"));
         }
-        if ((request.getParameter("email") != null)
+        if ((request.getAttribute("email") != null)
                 && request.getParameter("email").trim().length() != 0) {
             contact.setEmail(request.getParameter("email"));
         }
-        if ((request.getParameter("job") != null)
+        if ((request.getAttribute("job") != null)
                 && request.getParameter("job").trim().length() != 0) {
             contact.setJob(request.getParameter("job"));
         }
-        if (request.getParameter("country") != null
+        if (request.getAttribute("country") != null
                 && request.getParameter("country").trim().length() != 0) {
             contact.setCountry(request.getParameter("country"));
         }
-        if (request.getParameter("city") != null
-                && request.getParameter("city").trim().length() != 0) {
+        if (request.getAttribute("city") != null
+                && ((String) request.getAttribute("city")).trim().length() != 0) {
             contact.setCity(request.getParameter("city"));
         }
-        if (request.getParameter("streetHouseRoom") != null
-                && request.getParameter("streetHouseRoom").trim().length() != 0) {
+        if (request.getAttribute("streetHouseRoom") != null
+                && ((String) request.getAttribute("streetHouseRoom")).trim().length() != 0) {
             contact.setStreetHouseRoom(request.getParameter("streetHouseRoom"));
         }
-        if (request.getParameter("index") != null
-                && request.getParameter("index").trim().length() != 0) {
+        if (request.getAttribute("index") != null
+                && ((String) request.getAttribute("index")).trim().length() != 0) {
             contact.setIndexNumber(request.getParameter("index"));
         }
 
@@ -113,7 +114,6 @@ public abstract class CommandProcess {
         String phoneNumbers[] = request.getParameterValues("phoneNumber");
         String phoneComments[] = request.getParameterValues("phoneComment");
         String phoneTypes[] = request.getParameterValues("phoneType");
-
         PhoneDAO phoneDAO = new PhoneDAO();
 
         List<Phone> list = new ArrayList<>();
@@ -124,28 +124,37 @@ public abstract class CommandProcess {
         //3
         for (int i = 0; i < phoneIDs.length; i++) {
             //4
-            switch (phoneActions[i]) {
-                //5
-                case "none":
-                    break;
-                //6
-                case "update":
-                    Phone phone = new Phone();
-                    phone.setId(Integer.parseInt(phoneIDs[i]));
-                    phone.setCountryCode(phoneNumbers[i].split("-")[0]);
-                    phone.setOperatorCode(phoneNumbers[i].split("-")[1]);
-                    phone.setPhoneNumber(phoneNumbers[i].split("-")[2]);
-                    phone.setPhoneType(EnumPhoneType.valueOf(phoneTypes[i]));
-                    phone.setIdContact(Integer.parseInt(request.getParameter("contactId")));
-                    phone.setComment(phoneComments[i]);
+            System.out.println("UPDATE");
+            Phone phone = new Phone();
+            try {
+                switch (phoneActions[i]) {
+                    //5
+                    case "none":
+                        break;
+                    //6
+                    case "update":
+                        phone.setId(Integer.parseInt(phoneIDs[i]));
+                        phone.setCountryCode(phoneNumbers[i].split("-")[0]);
+                        phone.setOperatorCode(phoneNumbers[i].split("-")[1]);
+                        phone.setPhoneNumber(phoneNumbers[i].split("-")[2]);
+                        phone.setPhoneType(EnumPhoneType.valueOf(phoneTypes[i]));
+                        phone.setIdContact(Integer.parseInt(request.getParameter("contactId")));
+                        phone.setComment(phoneComments[i]);
 
-                    phoneDAO.updatePhone(phone);
-                    break;
-                //7
-                default:
-                    break;
+                        phoneDAO.updatePhone(phone);
+                        break;
+                    //7
+                    case "delete":
+                        System.out.println("DElete");
+                        phone.setId(Integer.parseInt(phoneIDs[i]));
+                        phoneDAO.deletePhone(phone);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (DAOException ex) {
+                LOGGER.error(ex.getMessage());
             }
-            //8
         }
 
         //9
@@ -159,24 +168,38 @@ public abstract class CommandProcess {
             phone.setIdContact(Integer.parseInt(request.getParameter("contactId")));
             phone.setComment(phoneComments[i]);
 
-            phoneDAO.createPhone(phone);
+            try {
+                phoneDAO.createPhone(phone);
+            } catch (DAOException ex) {
+                LOGGER.error(ex.getMessage());
+            }
         }
         //11
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, NamingException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
 
-        List<Contact> list = contactDAO.findAll(null, null);
+        List<Contact> list = null;
+        try {
+            list = contactDAO.findAll(null, null);
 
-        request.setAttribute("contactList", list);
-        request.setAttribute("pageNumber", 1);
-        request.setAttribute("recordsOnPage", 10);
-        request.setAttribute("recordsCount", contactDAO.getRecordsCount());
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.setAttribute("contactList", list);
+            request.setAttribute("pageNumber", 1);
+            request.setAttribute("recordsOnPage", 10);
+            request.setAttribute("recordsCount", contactDAO.getRecordsCount());
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        } catch (DAOException | ServletException | IOException ex) {
+            LOGGER.error(ex.getMessage());
+        }
+
     }
 
-    protected void processAttachments(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (connection != null) {
+            connection.close();
+        }
     }
+
 }

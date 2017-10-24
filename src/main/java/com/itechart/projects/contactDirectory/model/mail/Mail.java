@@ -1,6 +1,7 @@
 package com.itechart.projects.contactDirectory.model.mail;
 
 import com.itechart.projects.contactDirectory.model.entity.Contact;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Mail {
@@ -9,6 +10,7 @@ public class Mail {
     private String message;
 
     public Mail() {
+        contacts = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -29,6 +31,14 @@ public class Mail {
 
     public Mail(List<Contact> contacts) {
         this.contacts = contacts;
+    }
+    
+    public void setContact(Contact contact){
+        contacts.add(contact);
+    }
+    
+    public Contact getContact(){
+        return contacts.size() > 0 ? contacts.get(contacts.size()-1) : null;
     }
 
     public List<Contact> getContacts() {

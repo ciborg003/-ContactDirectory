@@ -1,32 +1,40 @@
 package com.itechart.projects.contactDirectory.model.pool;
 
-import com.itechart.projects.contactDirectory.util.FileWorker;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.Logger;
 
 public class ConnectionManager {
-    private static final String propFile = "D:\\ItechArt\\ContactDirectory\\src\\main\\resources\\META-INF\\properties\\DB_Properties.properties";//"src\\main\\resources\\META-INF\\DB_Properties.properties";
-    
-    public static synchronized Connection getConnection() throws SQLException {
+
+    private static final String propFile = "DB_Properties";
+    private static final Logger LOGGER = Logger.getRootLogger();
+
+    public static synchronized Connection getConnection() {
         BasicDataSource dataSource = new BasicDataSource();
+        ResourceBundle bundle = ResourceBundle.getBundle(propFile);
+
+        dataSource.setDriverClassName(bundle.getString("driver"));
+        dataSource.setUrl(bundle.getString("URL"));
+        dataSource.setUsername(bundle.getString("user"));
+        dataSource.setPassword(bundle.getString("password"));
+        dataSource.setMaxOpenPreparedStatements(Integer.parseInt(bundle.getString("max_pool")));
+
+        try {
+            Connection connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            return connection;
+        } catch (SQLException ex) {
+            LOGGER.error("Can't get connection to DB", ex);
+        } 
         
-        Properties properties = FileWorker.getPropertyFile(propFile);
-        
-        dataSource.setDriverClassName(properties.getProperty("driver"));
-        dataSource.setUrl(properties.getProperty("URL"));
-        dataSource.setUsername(properties.getProperty("user"));
-        dataSource.setPassword(properties.getProperty("password"));
-        dataSource.setMaxOpenPreparedStatements(100);
-        
-        return dataSource.getConnection();
+        return null;
     }
-    
-    public static void closeConnection(Connection connection){
+
+    public static void closeConnection(Connection connection) {
         try {
             //1
             if (connection != null) {
@@ -34,7 +42,7 @@ public class ConnectionManager {
                 connection.close();
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Can't close connection", ex);
         }
         //3
     }

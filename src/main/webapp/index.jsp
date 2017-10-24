@@ -43,10 +43,16 @@
                     <button class="btn btn-info" type="button" onclick="sendMails()">Send mail</button>
                     <button class="btn btn-info" type="button" onclick="deleteContact()()">Delete</button>
                 </div>
-                <table class="table table-bordered">
+                <table class="table table-striped">
                     <c:forEach var="contact" items="${contactList}">
                         <tr id="${contact.id}">
-                            <td valign><input type="checkbox" onchange="checkBoxAction(this)"></td>
+                            <td valign>
+                                <!--<input type="checkbox" onchange="checkBoxAction(this)">-->
+                                <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                                    <input type="checkbox" class="custom-control-input" onchange="checkBoxAction(this)" >
+                                    <span class="custom-control-indicator"></span>
+                                </label>
+                            </td>
                             <td>
                                 <a href="?action=updateContact&contactID=${contact.id}">Full Name: ${contact.name} ${contact.surname}  
                                     ${contact.patronymic}</a>
@@ -67,7 +73,7 @@
         </form>
         <script src="js/index.js"></script>
         <script type="text/javascript">
-                                        loadPage(${recordsCount},${pageNumber},${recordsOnPage});
+            loadPage(${recordsCount},${pageNumber},${recordsOnPage});
         </script>
     </body>
 </html>

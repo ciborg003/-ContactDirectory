@@ -2,13 +2,14 @@ package com.itechart.projects.contactDirectory.model.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Attachment extends Entity{
 
     private static final long serialVersionUID = 1L;
     private String url;
     private int idContact;
-    private Date loadDate;
+    private Timestamp loadDate;
     private String comment;
     private String fileName;
 
@@ -23,11 +24,11 @@ public class Attachment extends Entity{
         this.fileName = fileName;
     }
     
-    public Date getLoadDate() {
+    public Timestamp getLoadDate() {
         return loadDate;
     }
 
-    public void setLoadDate(Date loadDate) {
+    public void setLoadDate(Timestamp loadDate) {
         this.loadDate = loadDate;
     }
 
@@ -64,8 +65,9 @@ public class Attachment extends Entity{
 
     @Override
     public String toString() {
-        return "Attachment{" + "url=" + url + ", idContact=" + idContact + ", comment=" + comment + '}';
+        return "Attachment{" + "id=" + super.getId()  + ", url=" + url + ", idContact=" + idContact + ", loadDate=" + loadDate + ", comment=" + comment + ", fileName=" + fileName + '}';
     }
 
     
+        
 }

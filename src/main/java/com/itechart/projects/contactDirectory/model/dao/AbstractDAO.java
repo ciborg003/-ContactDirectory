@@ -4,8 +4,14 @@ import com.itechart.projects.contactDirectory.model.entity.Entity;
 import java.sql.Connection; 
 import java.sql.SQLException; 
 import java.sql.Statement; 
+import org.apache.log4j.Logger;
 
 public abstract class AbstractDAO <K, T extends Entity> { 
+    
+    protected static final Logger LOGGER = Logger.getRootLogger();
+
+    public AbstractDAO() {
+    }
 
     public void closeStatement(Statement statement){
         try {
@@ -13,7 +19,7 @@ public abstract class AbstractDAO <K, T extends Entity> {
                 statement.close();
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Can't close statement", ex);
         }
     }
 } 

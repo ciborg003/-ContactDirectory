@@ -21,6 +21,7 @@ public class Contact extends Entity{
     private String streetHouseRoom;
     private String indexNumber;
     private String email;
+    private String photoUrl;
 
     public String getIndexNumber() {
         return indexNumber;
@@ -135,6 +136,14 @@ public class Contact extends Entity{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     @Override

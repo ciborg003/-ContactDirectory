@@ -1,8 +1,9 @@
 package com.itechart.projects.contactDirectory.model.dao;
 
+import static com.itechart.projects.contactDirectory.model.dao.AbstractDAO.LOGGER;
 import com.itechart.projects.contactDirectory.model.entity.Attachment;
 import com.itechart.projects.contactDirectory.model.entity.Contact;
-import com.itechart.projects.contactDirectory.model.entity.Entity;
+import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -10,24 +11,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
 
     private Connection connection;
     private final String CREATE_ATTACHMENT
-            = "{call insertAttachmentinsertAttachment(?,?,?,?)}";
+            = "{call insertAttachment(?,?,?,?,?)}";
     private final String FIND_ATTACHMENTS = "{call findAttachmentsByIdContact(?)}";
-    private final String UPDATE_ATTACHMENT = "{call updateAttachment(?,?,?,?,?)}";
+    private final String UPDATE_ATTACHMENT = "{call updateAttachment(?,?,?,?,?,?)}";
     private final String FIND_ATTACHMENT_BY_ID = "{call findAttachmentByID(?)}";
+    private final String DELETE_ATTACHMENT = "{call deleteAttachment(?)}";
 
-    public Integer createAttachment(Attachment attachment) {
+    public Integer createAttachment(Attachment attachment) throws DAOException {
         CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
         try {
             statement = connection.prepareCall(CREATE_ATTACHMENT);
 
-            statement.setDate(1, attachment.getLoadDate());
+            statement.setTimestamp(1, attachment.getLoadDate());
             statement.setString(2, attachment.getUrl());
             statement.setString(3, attachment.getFileName());
             statement.setInt(4, attachment.getIdContact());
@@ -38,7 +41,8 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
                 return genKey.getInt(1);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex);
+            throw new DAOException(ex);
         } finally {
             closeStatement(statement);
         }
@@ -46,67 +50,120 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
         return null;
     }
 
-    public List<Attachment> findAttachmentsByContact(Contact contact) throws SQLException {
+    public List<Attachment> findAttachmentsByContact(Contact contact) throws DAOException {
         List<Attachment> list = new ArrayList<>();
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
+        try {
+            statement = connection.prepareCall(FIND_ATTACHMENTS);
+            statement.setInt(1, contact.getId());
 
-        CallableStatement statement = connection.prepareCall(FIND_ATTACHMENTS);
-        statement.setInt(1, contact.getId());
+            ResultSet resultSet = statement.executeQuery();
 
-        ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Attachment a = new Attachment();
+                a.setId(resultSet.getInt(1));
+                a.setLoadDate(resultSet.getTimestamp(2));
+                a.setUrl(resultSet.getString(3));
+                a.setFileName(resultSet.getString(4));
+                a.setComment(resultSet.getString(5));
+                a.setIdContact(contact.getId());
 
-        while (resultSet.next()) {
-            Attachment a = new Attachment();
-            a.setId(resultSet.getInt(1));
-            a.setLoadDate(resultSet.getDate(2));
-            a.setUrl(resultSet.getString(3));
-            a.setFileName(resultSet.getString(4));
-            a.setComment(resultSet.getString(5));
-            a.setIdContact(contact.getId());
-
-            list.add(a);
+                list.add(a);
+            }
+        } catch (SQLException ex) {
+            LOGGER.error(ex);
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
         }
 
         return list;
     }
 
-    public void updateAttachment(Attachment attachment) throws SQLException {
-        CallableStatement statement = connection.prepareCall(UPDATE_ATTACHMENT);
+    public void updateAttachment(Attachment attachment) throws DAOException {
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
+        try {
+            statement = connection.prepareCall(UPDATE_ATTACHMENT);
+            
+            statement.setInt(1, attachment.getId());
+            statement.setTimestamp(2, attachment.getLoadDate());
+            statement.setString(3, attachment.getUrl());
+            statement.setString(4, attachment.getFileName());
+            statement.setInt(5, attachment.getIdContact());
+            statement.setString(6, attachment.getComment());
 
-        statement.setInt(1, attachment.getId());
-        statement.setDate(2, attachment.getLoadDate());
-        statement.setString(3, attachment.getUrl());
-        statement.setString(4, attachment.getFileName());
-        statement.setInt(5, attachment.getIdContact());
-        statement.setString(6, attachment.getComment());
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+        }
     }
-    
-    public Attachment getAttachmentByID(Integer id){
+
+    public Attachment getAttachmentByID(Integer id) throws DAOException {
         CallableStatement statement = null;
         Attachment attachment = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
         try {
             statement = connection.prepareCall(FIND_ATTACHMENT_BY_ID);
-            
+
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            
-            while(resultSet.next()){
+
+            while (resultSet.next()) {
                 attachment = new Attachment();
                 attachment.setId(id);
                 attachment.setUrl(resultSet.getString(1));
                 attachment.setFileName(resultSet.getString(2));
-                attachment.setLoadDate(resultSet.getDate(3));
+                attachment.setLoadDate(resultSet.getTimestamp(3));
                 attachment.setIdContact(resultSet.getInt(4));
                 attachment.setComment(resultSet.getString(5));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
         }
-        
+
         return attachment;
     }
 
-    public AttachmentDAO() throws SQLException {
-        connection = ConnectionManager.getConnection();
+    public void deleteAttachment(Attachment attachment) throws DAOException {
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
+        try {
+            statement = connection.prepareCall(DELETE_ATTACHMENT);
+
+            statement.setInt(1, attachment.getId());
+            statement.execute();
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+        }
     }
+
+    public AttachmentDAO() {
+    }
+
+    public AttachmentDAO(Connection connection) {
+        LOGGER.info("Connection is " + connection);
+        this.connection = connection;
+    }
+    
+    
 
 }

@@ -5,16 +5,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html">
         <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/navbar.css" />
-        <link rel="stylesheet" type="text/css" href="css/header.css">
-        <link rel="stylesheet" type="text/css" href="css/editing.css">
         <link rel="stylesheet" type="text/css" href="css/popup.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/editing.css">
+        <link rel="stylesheet" type="text/css" href="css/navbar.css">
+        <link rel="stylesheet" type="text/css" href="css/header.css">
         <title>User Page</title>
     </head>
     <body>
-        <div id="wrap">
+        <div id="wrap"> 
             <input type="hidden" id="popUpAction" value="none">
             <div id="popupPhone">
                 <div class="container-fluid">
@@ -66,17 +66,9 @@
             <div id="popupAttachment">
                 <h4>Editing Attachment</h4>
                 <div class="container">
-                    <div class="form-group">
-                        <!--                        <div class="col-md-auto">
-                                                    <label class="form-control-label">Select File:</label>
-                                                </div>
-                                                <div class="col-md-auto">
-                                                    <input type="file" name="data" id="file" class="form-control">
-                                                </div>-->
-                        <div class="form-group">
-                            <label for="file">Select file:</label>
-                            <input type="file" name="data" class="form-control-file" id="file">
-                        </div>
+                    <div id="select-file" class="form-group">
+                        <label for="file">Select file:</label>
+                        <input type="file" id="file" name="data" class="form-control-file">
                     </div>
                 </div>
                 <br>
@@ -94,22 +86,31 @@
         </div>
 
         <jsp:include page="navbar.jsp" />
-
         <h1 class="h1">Editing Contact</h1>       
-        <form id="form" action="ServletController" method="POST" enctype="multipart/form-data">
-            <input type="hidden" value="${action}" name="action" />
+        <form id="form" action="ServletController?action=${action}" method="POST" enctype="multipart/form-data">
+            <!--<input type="hidden" value=${action} name="action" />-->
             <input type="hidden" name="contactId" value="${contact.id}"/>
             <div id="save">
-                <button type="button" class="btn btn-primary btn-md" padding = 20px onclick="saveContact()">
+                <button type="submit" class="btn btn-primary btn-md" padding = 20px onclick="saveContact()">
                     Save Contact
                 </button>
             </div>
-            <input type="image" src="photos/noimage.jpg"  alt="photo" class="thumbnail">
+
+            <div class="input-group">
+                <label for="selectPhoto" id="photoLabel">
+                    <img src="/ServletController/m?action=getPhoto&photo=${contact.photoUrl}" 
+                         id="photo" alt="photo" class="thumbnail">
+                </label>
+                <div hidden="">
+                    <input type="hidden" id="photoAction" name="photoAction" value="none">
+                    <input type="file" value="${contact.photoUrl}" id="selectPhoto" name="selectPhoto" onchange="changePhoto()">
+                </div>
+            </div>
             <div class="input-group">
                 <span class="input-group-addon">FirstName</span>
                 <input name="fName" type="text" class="form-control" 
                        placeholder="FirstName" value="${contact.name}">
-            </div>
+            </div> 
 
             <div class="input-group">
                 <span class="input-group-addon">LastName</span>
@@ -124,7 +125,7 @@
             <div class="input-group">
                 <span class="input-group-addon">Birthday</span>
                 <input name="birthday" type="date" class="form-control"
-                       value="${contact.dob}">
+                       value="${contact.dob}" max="${maxDate}">
             </div>
             <label class="form-control-label" for="formGroupExampleInput2">
                 Gender: 
@@ -205,14 +206,14 @@
             <div id="editingPhones">
                 <div id="phoneActions">
                     <button type="button" class="btn btn-info btn-md" onclick="createPhone()">Add</button>
-                    <button type="button" class="btn btn-info btn-md">Delete</button>
+                    <button type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
                     <button type="button" class="btn btn-info btn-md">Edit</button>
                 </div>
 
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <td>CheckBox</td>
+                            <td>Selected Phones</td>
                             <td>Phone Number</td>
                             <td>Phone Type</td>
                             <td>Comment</td>
@@ -221,14 +222,17 @@
                     </thead>
                     <tbody  id="phoneList"class="table table-bordered">
                         <c:forEach items="${phoneList}" var="phone">
-                            <tr>
+                            <tr id=${phone.id}>
                         <input type="hidden" name="phoneAction" value="none"/>
                         <input type="hidden" name="phoneNumber"  value="${phone.countryCode}-${phone.operatorCode}-${phone.phoneNumber}" />
                         <input type="hidden" name="phoneComment" value="${phone.comment}" />
                         <input type="hidden" name="phoneType" value="${phone.phoneType}"/>
                         <input type="hidden" name="phoneID" value="${phone.id}"/>
                         <td>
-                            <input type="checkbox" />
+                            <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                                <input type="checkbox" class="custom-control-input" onchange="checkBoxPhoneAction(this)">
+                                <span class="custom-control-indicator"></span>
+                            </label>
                         </td>
                         <td>
                             <h6>${phone.countryCode}-${phone.operatorCode}-${phone.phoneNumber}</h6>
@@ -245,7 +249,7 @@
                         <td>
                             <div class='ctrlBtn btn-group'>
                                 <button type="button" class="btn btn-info btn-md" onclick="editPhone(this)">Edit</button>
-                                <button class='btn btn-info'>Delete</button>
+                                <button type="button" class='btn btn-info' onclick="deletePhone(this)">Delete</button>
                             </div>
                         </td>
                         </tr>
@@ -255,9 +259,8 @@
             </div>
             <div id="editingAttachments">
                 <div id="attachmentActions">
-                    <button type="button" class="btn btn-info btn-md" onclick="showAttachmentPopup('block')">
-                        <span class="glyphicon glyphicon-paperclip"></span> Add</button>
-                    <button type="button" class="btn btn-info btn-md">Delete</button>
+                    <button type="button" class="btn btn-info btn-md" onclick="createAttachment()">
+                        <span class="fa fa-plus"></span> Add</button>
                 </div>
 
                 <table class="table table-bordered">
@@ -266,20 +269,31 @@
                             <td>File Name</td>
                             <td>Load Date</td>
                             <td>Comment</td>
+                            <td>Actions</td>
                         </tr>
                     </thead>
                     <tbody id="attachmentList">
                         <c:forEach items="${attachmentList}" var="attachment">
                             <tr id="${attachment.id}">
-                        <input type="hidden" name="idAttachment" value="${attachment.id}">
-                        <input type="hidden" name="filePath" value="${attachment.url}">
+                        <input type="hidden" name="attachmentAction" value="none">
                         <input type="hidden" name="loadDate" value="${attachment.loadDate}">
-                        <input type="hidden" name="comment" value="${attachment.comment}">
+                        <input type="hidden" name="attachmentComment" value="${attachment.comment}">
+                        <input type="hidden" name="filePath" value="${attachment.url}">
+                        <input type="hidden" name="idAttachment" value="${attachment.id}">
+                        <td hidden="">
+                            <input type="file" name="fileStorage">
+                        </td>
                         <td>
-                            <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="glyphicon glyphicon-download"></span> ${attachment.url}</button>
+                            <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="fa fa-download"></span> ${attachment.fileName}</button>
                         </td>
                         <td><h6>${attachment.loadDate}</h6></td>
                         <td><h6>${attachment.comment}</h6></td>
+                        <td>
+                            <div class='ctrlBtn btn-group'>
+                                <button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>
+                                <button type="button" class='btn btn-info' onclick='deleteAttachment(this)'>Delete</button>
+                            </div>
+                        </td>
                         </tr>
                     </c:forEach>
                     </tbody>

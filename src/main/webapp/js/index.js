@@ -103,7 +103,7 @@ function editContact(button) {
 
 function checkBoxAction(checkBox) {
     //1
-    var id = checkBox.parentElement.parentElement.id;
+    var id = checkBox.parentElement.parentElement.parentElement.id;
 
     //2
     if (checkBox.checked) {
@@ -130,9 +130,9 @@ function deleteElementFromArray(arr, el) {
     return arr;
 }
 
-function deleteContact(checkBox) {
-    if (checkBox) {
-        contact.selectedContacts = [+checkBox.parentElement.parentElement.parentElement.id];
+function deleteContact(btn) {
+    if (btn) {
+        contact.selectedContacts = [+btn.parentElement.parentElement.parentElement.id];
     }
 
     if (contact.selectedContacts.length < 1) {

@@ -10,7 +10,7 @@ function addEmail() {
     div.className = "col-md-4";
     var li = document.createElement("li");
     li.className = "list-group-item";
-    li.innerHTML = '<p>' + email + ' </p><button type="button" class="btn btn-info button-add" onclick="deleteEmail(this)"><span class="fa fa-trash" />';
+    li.innerHTML = '<p>' + email + ' </p><button type="button" class="btn btn-info button-add" onclick="deleteEmail(this)"><span class="fa fa-remove" />';
     li.innerHTML += '<input type="hidden" name="email" value="' + email + '" />';
     div.appendChild(li);
     emailList.appendChild(div);
@@ -47,4 +47,23 @@ function validateEmail(email) {
         return false;
     }
     return true;
+}
+
+function changeTemplate() {
+    var options = document.getElementsByTagName('option');
+    var msg;
+
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].selected) {
+            if (document.getElementById(options[i].value)) {
+                msg = document.getElementById(options[i].value).value;
+            }
+        }
+    }
+
+    if (!msg) {
+        msg = '';
+    }
+
+    document.getElementsByName('mailContent')[0].value = msg;
 }

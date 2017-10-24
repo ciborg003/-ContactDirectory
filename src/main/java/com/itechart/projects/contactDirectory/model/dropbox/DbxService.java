@@ -24,7 +24,7 @@ public class DbxService {
     }
 
     private void authClient() throws DbxException {
-        DbxRequestConfig config = new DbxRequestConfig("Ilya_Pavlovsky");
+        DbxRequestConfig config = new DbxRequestConfig(user.getUsername());
         client = new DbxClientV2(config, user.getAccessToken());
         account = client.users().getCurrentAccount();
     }
@@ -89,6 +89,16 @@ public class DbxService {
         }
 
         return true;
+    }
+    
+    public long getSize(String path){
+        try {
+            return client.files().downloadBuilder(path).start().getResult().getSize();
+        } catch (DbxException ex) {
+            ex.printStackTrace();
+        }
+        
+        return 0;
     }
 
     public DbxClientV2 getClient() {

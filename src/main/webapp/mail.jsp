@@ -6,9 +6,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <!--        <header class="page-header">
-                    <h1><a href="http://localhost:8080/ServletController/app">Contact Directory</a></h1>
-                </header>-->
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Send Mail</h1>
         <form method="GET" action="ServletController">
@@ -55,10 +52,12 @@
                     </div>
                     <div class="col-md-6">
                         <label>Template:</label>
-                        <select class="form-control">
+                        <select class="form-control" name="msgTemplate" onchange="changeTemplate()">
                             <option>None</option>
-                            <option>Template 1</option>
-                            <option>Template 2</option>
+                            <c:forEach items="${templates}" var="template">
+                                <option>${template.msgName}</option>
+                                <input type="hidden" value="${template.msg}" id="${template.msgName}">
+                            </c:forEach>
                         </select>
                     </div>
                 </div>

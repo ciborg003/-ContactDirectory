@@ -4,7 +4,7 @@
     <div class="ctrlBtn">
         <a href="?action=getSearchPage">
             <button class="btn btn-search" type="button">
-                <span class="fa fa-search" />
+                <span class="fa fa-search"></span>
                 Search
             </button>
         </a>

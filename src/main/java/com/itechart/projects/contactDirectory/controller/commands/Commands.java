@@ -20,7 +20,7 @@ public class Commands {
         processors.put("downloadFile", DownloadFileCommand.class);
         processors.put("getMailPage", GetMailPageCommand.class);
         processors.put("getSearchPage", GetSearchPageCommand.class);
-        processors.put("cloudRail", GetSearchPageCommand.class);
+        processors.put("getPhoto", GetPhotoCommand.class);
         processors.put(null, GetMainPageCommand.class);
     }
 

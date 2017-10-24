@@ -1,9 +1,10 @@
 package com.itechart.projects.contactDirectory.model.dao;
 
+import static com.itechart.projects.contactDirectory.model.dao.AbstractDAO.LOGGER;
 import com.itechart.projects.contactDirectory.model.entity.Contact;
-import com.itechart.projects.contactDirectory.model.entity.Entity;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
+import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -11,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PhoneDAO extends AbstractDAO<Integer, Phone> {
 
@@ -20,50 +19,79 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
     private final String INSERT_PHONE = "{call insertPhone(?,?,?,?,?,?)}";
     private final String FIND_PHONES = "{call findPhonesByIdContact(?)}";
     private final String UPDATE_PHONE = "{call updatePhone(?,?,?,?,?,?,?)}";
+    private final String DELETE_PHONE = "{call deletePhone(?)}";
 
-    public List<Phone> findPhonesByContact(Contact contact) throws SQLException {
+    public PhoneDAO(Connection connection) {
+        LOGGER.info("Connection is " + connection);
+        this.connection = connection;
+    }
+
+    public List<Phone> findPhonesByContact(Contact contact) throws DAOException {
         List<Phone> list = new ArrayList<>();
-
-        CallableStatement statement = connection.prepareCall(FIND_PHONES);
-        statement.setInt(1, contact.getId());
-
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            Phone phone = new Phone();
-            phone.setId(resultSet.getInt(1));
-            phone.setCountryCode(resultSet.getString(2));
-            phone.setOperatorCode(resultSet.getString(3));
-            phone.setPhoneNumber(resultSet.getString(4));
-            phone.setPhoneType(EnumPhoneType.valueOf(resultSet.getString(5)));
-            phone.setComment(resultSet.getString(6));
-            phone.setIdContact(contact.getId());
-
-            list.add(phone);
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
         }
-        closeStatement(statement);
+
+        try {
+            statement = connection.prepareCall(FIND_PHONES);
+            statement.setInt(1, contact.getId());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Phone phone = new Phone();
+                phone.setId(resultSet.getInt(1));
+                phone.setCountryCode(resultSet.getString(2));
+                phone.setOperatorCode(resultSet.getString(3));
+                phone.setPhoneNumber(resultSet.getString(4));
+                phone.setPhoneType(EnumPhoneType.valueOf(resultSet.getString(5)));
+                phone.setComment(resultSet.getString(6));
+                phone.setIdContact(contact.getId());
+
+                list.add(phone);
+            }
+
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+        }
 
         return list;
     }
 
-    public void updatePhone(Phone phone) throws SQLException {
-        CallableStatement statement = connection.prepareCall(UPDATE_PHONE);
+    public void updatePhone(Phone phone) throws DAOException {
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
+        try {
+            statement = connection.prepareCall(UPDATE_PHONE);
 
-        statement.setInt(1, phone.getId());
-        statement.setString(2, phone.getCountryCode());
-        statement.setString(3, phone.getOperatorCode());
-        statement.setString(4, phone.getPhoneNumber());
-        statement.setString(5, phone.getPhoneType().getDescription());
-        statement.setInt(6, phone.getIdContact());
-        statement.setString(7, phone.getComment());
+            statement.setInt(1, phone.getId());
+            statement.setString(2, phone.getCountryCode());
+            statement.setString(3, phone.getOperatorCode());
+            statement.setString(4, phone.getPhoneNumber());
+            statement.setString(5, phone.getPhoneType().getDescription());
+            statement.setInt(6, phone.getIdContact());
+            statement.setString(7, phone.getComment());
 
-        statement.executeUpdate();
-
-        closeStatement(statement);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+        }
     }
 
-    public Integer createPhone(Phone phone) {
+    public Integer createPhone(Phone phone) throws DAOException {
         CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
         try {
             statement = connection.prepareCall(INSERT_PHONE);
 
@@ -79,7 +107,8 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
                 return genKey.getInt(1);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
         } finally {
             closeStatement(statement);
         }
@@ -87,7 +116,26 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
         return null;
     }
 
-    public PhoneDAO() throws SQLException {
-        this.connection = ConnectionManager.getConnection();
+    public void deletePhone(Phone phone) throws DAOException {
+        CallableStatement statement = null;
+        if (connection == null){
+            connection = ConnectionManager.getConnection();
+        }
+        try {    
+            statement = connection.prepareCall(DELETE_PHONE);
+            
+            statement.setInt(1, phone.getId());
+            
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+        }
     }
+
+    public PhoneDAO() {
+    }   
+    
 }
