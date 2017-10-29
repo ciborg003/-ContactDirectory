@@ -2,19 +2,22 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta http-equiv="Content-Type" content="text/html">
         <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/navbar.css" />
         <link rel="stylesheet" type="text/css" href="css/popup.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="css/editing.css">
-        <link rel="stylesheet" type="text/css" href="css/navbar.css">
-        <link rel="stylesheet" type="text/css" href="css/header.css">
+        <link rel="stylesheet" type="text/css" href="css/button-style.css">
+        <link rel="stylesheet" type="text/css" href="css/table-style.css">
         <title>User Page</title>
     </head>
+
     <body>
-        <div id="wrap"> 
+        <div id="wrap">
             <input type="hidden" id="popUpAction" value="none">
             <div id="popupPhone">
                 <div class="container-fluid">
@@ -34,20 +37,14 @@
                     </div>
 
                     <label class="form-control-label" for="formGroupExampleInput2">
-                        Phone Type: 
+                        Phone Type:
                     </label>
                     <div class="form-check form-check-inline">
                         <label class="form-check-label">
-                            <input id="mobileType" class="form-check-input" 
-                                   type="radio" name="inlineRadioOptions" 
-                                   id="inlineRadio1" value="option1" checked="true"> 
-                            Mobile
+                            <input id="mobileType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked="true">Mobile
                         </label>
                         <label class="form-check-label">
-                            <input id="homeType" class="form-check-input" 
-                                   type="radio" name="inlineRadioOptions" 
-                                   id="inlineRadio2" value="option2"> 
-                            Home
+                            <input id="homeType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">Home
                         </label>
                     </div>
                     <br>
@@ -58,8 +55,8 @@
                         <textarea class="form-control" id="phoneComment" rows="5"></textarea>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" onclick="savePhone();">Save</button>
-                        <button type="button" class="btn" onclick="showPhonePopup('none');">Cancel</button>
+                        <button type="submit" class="button-red btn btn-primary" onclick="savePhone();">Save</button>
+                        <button type="button" class="button-red btn" onclick="showPhonePopup('none');">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -79,138 +76,144 @@
                     <textarea class="form-control" id="attachmentComment" rows="5"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" onclick="saveAttachment();">Save</button>
-                    <button type="button" class="btn" onclick="showAttachmentPopup('none');">Cancel</button>
+                    <button type="submit" class="button-red btn btn-primary" onclick="saveAttachment();">Save</button>
+                    <button type="button" class="button-red btn" onclick="showAttachmentPopup('none');">Cancel</button>
                 </div>
             </div>
         </div>
 
         <jsp:include page="navbar.jsp" />
-        <h1 class="h1">Editing Contact</h1>       
+        <h1 class="h1">Editing Contact</h1> 
         <form id="form" action="ServletController?action=${action}" method="POST" enctype="multipart/form-data">
             <!--<input type="hidden" value=${action} name="action" />-->
-            <input type="hidden" name="contactId" value="${contact.id}"/>
+            <input type="hidden" name="contactId" value="${contact.id}" />
+
+            <div class="main-container_photo_and_info">
+                <div class="container-photo">
+                    <div class="input-group">
+                        <label for="selectPhoto" id="photoLabel">
+                            <img class="mini-photo" src="/ServletController/m?action=getPhoto&photo=${contact.photoUrl}" id="photo" alt="photo" class="thumbnail">
+                        </label>
+                        <div hidden="">
+                            <input type="hidden" id="photoAction" name="photoAction" value="none">
+                            <input type="file" value="${contact.photoUrl}" id="selectPhoto" name="selectPhoto" onchange="changePhoto()">
+                        </div>
+                    </div>
+                </div>
+                <div class="container-main_info">
+                    <div class="input-group">
+                        <span class="input-group-addon">FirstName</span>
+                        <input name="fName" type="text" class="form-control" placeholder="FirstName" value="${contact.name}">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">LastName</span>
+                        <input name="lName" type="text" class="form-control" placeholder="LastName" value="${contact.surname}">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Patronymic</span>
+                        <input name="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Birthday</span>
+                        <input name="birthday" type="date" class="form-control" value="${contact.dob}" max="${maxDate}">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Gender</span>
+                        <select class="form-control" name="gender" value="${contact.gender}">
+                            <c:forEach items="${genders}" var="gender">
+                                <<c:set var="option" value="${gender}" />
+                                <c:set var="sex" value="${contact.gender}" />
+                                <c:if test="${option==sex}">
+                                    <option selected>${gender}</option>
+                                </c:if>
+                                <c:if test="${option!=sex}">
+                                    <option>${gender}</option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Nationality: </span>
+                        <input name="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid main-container-edd-info">
+                <div class="container-edd-info">
+                    <div class="input-group">
+                        <span class="input-group-addon">Family state: </span>
+
+                        <select class="form-control" name="familyState">
+                            <c:forEach items="${familyStates}" var="familyState">
+                                <c:set var="option" value="${familyState}" />
+                                <c:set var="fState" value="${contact.familyState}" />
+                                <c:if test="${option==fState}">
+                                    <option selected>${familyState}</option>
+                                </c:if>
+                                <c:if test="${option!=fState}">
+                                    <option>${familyState}</option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Web Site: </span>
+                        <input name="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Email: </span>
+                        <input name="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Current Work: </span>
+                        <input name="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
+                    </div>
+                </div>
+                <div class="container-edd-info">
+
+
+                    <div class="input-group">
+                        <span class="input-group-addon">Country: </span>
+                        <input name="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">City: </span>
+                        <input name="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Street, House, Room:</span>
+                        <input name="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Index: </span>
+                        <input name="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
+                    </div>
+                </div>
+            </div>
             <div id="save">
-                <button type="submit" class="btn btn-primary btn-md" padding = 20px onclick="saveContact()">
+                <button type="submit" class="button-red btn btn-primary btn-md" padding=2 0px onclick="saveContact()">
                     Save Contact
                 </button>
             </div>
 
-            <div class="input-group">
-                <label for="selectPhoto" id="photoLabel">
-                    <img src="/ServletController/m?action=getPhoto&photo=${contact.photoUrl}" 
-                         id="photo" alt="photo" class="thumbnail">
-                </label>
-                <div hidden="">
-                    <input type="hidden" id="photoAction" name="photoAction" value="none">
-                    <input type="file" value="${contact.photoUrl}" id="selectPhoto" name="selectPhoto" onchange="changePhoto()">
-                </div>
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">FirstName</span>
-                <input name="fName" type="text" class="form-control" 
-                       placeholder="FirstName" value="${contact.name}">
-            </div> 
+            <!--<input type="image" src="photos/noimage.jpg" id="photo" name="photo" alt="photo" class="thumbnail" onclick="changePhoto()">-->
 
-            <div class="input-group">
-                <span class="input-group-addon">LastName</span>
-                <input name="lName" type="text" class="form-control" 
-                       placeholder="LastName" value="${contact.surname}">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Patronymic</span>
-                <input name="patronymic" type="text" class="form-control" 
-                       placeholder="Patronymic" value="${contact.patronymic}">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Birthday</span>
-                <input name="birthday" type="date" class="form-control"
-                       value="${contact.dob}" max="${maxDate}">
-            </div>
-            <label class="form-control-label" for="formGroupExampleInput2">
-                Gender: 
-            </label>
-            <div class="form-group">
-                <select class="form-control" name="gender" value="${contact.gender}">
-                    <c:forEach items="${genders}" var="gender">
-                        <<c:set var="option" value="${gender}"/>
-                        <c:set var="sex" value="${contact.gender}"/>
-                        <c:if test="${option==sex}">
-                            <option selected>${gender}</option>
-                        </c:if>
-                        <c:if test="${option!=sex}">
-                            <option>${gender}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <br>
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Nationality: </span>
-                <input name="nation" type="text" class="form-control" 
-                       value="${contact.nationality}" placeholder="Nationality">
-            </div>
-            <label class="form-control-label" for="formGroupExampleInput2">
-                Family State: 
-            </label>
-            <div class="form-group">
-                <select class="form-control" name="familyState">
-                    <c:forEach items="${familyStates}" var="familyState">
-                        <c:set var="option" value="${familyState}"/>
-                        <c:set var="fState" value="${contact.familyState}"/>
-                        <c:if test="${option==fState}">
-                            <option selected>${familyState}</option>
-                        </c:if>
-                        <c:if test="${option!=fState}">
-                            <option>${familyState}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Web Site: </span>
-                <input name="webSite" type="text" class="form-control" 
-                       value="${contact.webSite}" placeholder="Web Site">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Email: </span>
-                <input name="email" type="text" class="form-control" 
-                       value="${contact.email}" placeholder="Email">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Current Work: </span>
-                <input name="job" type="text" class="form-control" 
-                       value="${contact.job}" placeholder="Current Work">
-            </div><div class="input-group">
-                <span class="input-group-addon">Country: </span>
-                <input name="country" type="text" class="form-control" 
-                       value="${contact.country}" placeholder="Country">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">City: </span>
-                <input name="city" type="text" class="form-control" 
-                       value="${contact.city}" placeholder="City">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Street, House, Room:</span>
-                <input name="streetHouseRoom" type="text" class="form-control" 
-                       value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">Index: </span>
-                <input name="index" type="text" class="form-control" 
-                       value="${contact.indexNumber}" placeholder="Index">
-            </div>
+
 
 
             <div id="editingPhones">
                 <div id="phoneActions">
-                    <button type="button" class="btn btn-info btn-md" onclick="createPhone()">Add</button>
-                    <button type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
-                    <button type="button" class="btn btn-info btn-md">Edit</button>
+                    <div class="btn-group">
+                        <button type="button" class=" btn btn-info btn-md" onclick="createPhone()">Add</button>
+                        <button type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
+                        <button type="button" class="btn btn-info btn-md">Edit</button>
+                    </div>
+
                 </div>
 
-                <table class="table table-bordered">
+                <table class="table">
                     <thead>
                         <tr>
                             <td>Selected Phones</td>
@@ -220,14 +223,14 @@
                             <td>Actions</td>
                         </tr>
                     </thead>
-                    <tbody  id="phoneList"class="table table-bordered">
+                    <tbody id="phoneList">
                         <c:forEach items="${phoneList}" var="phone">
-                            <tr id=${phone.id}>
-                        <input type="hidden" name="phoneAction" value="none"/>
-                        <input type="hidden" name="phoneNumber"  value="${phone.countryCode}-${phone.operatorCode}-${phone.phoneNumber}" />
+                            <tr class="tr-custom" id="${phone.id}">
+                        <input type="hidden" name="phoneAction" value="none" />
+                        <input type="hidden" name="phoneNumber" value="${phone.countryCode}-${phone.operatorCode}-${phone.phoneNumber}" />
                         <input type="hidden" name="phoneComment" value="${phone.comment}" />
-                        <input type="hidden" name="phoneType" value="${phone.phoneType}"/>
-                        <input type="hidden" name="phoneID" value="${phone.id}"/>
+                        <input type="hidden" name="phoneType" value="${phone.phoneType}" />
+                        <input type="hidden" name="phoneID" value="${phone.id}" />
                         <td>
                             <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
                                 <input type="checkbox" class="custom-control-input" onchange="checkBoxPhoneAction(this)">
@@ -263,7 +266,7 @@
                         <span class="fa fa-plus"></span> Add</button>
                 </div>
 
-                <table class="table table-bordered">
+                <table class="table">
                     <thead>
                         <tr>
                             <td>File Name</td>
@@ -274,7 +277,7 @@
                     </thead>
                     <tbody id="attachmentList">
                         <c:forEach items="${attachmentList}" var="attachment">
-                            <tr id="${attachment.id}">
+                            <tr class="tr-custom" id="${attachment.id}">
                         <input type="hidden" name="attachmentAction" value="none">
                         <input type="hidden" name="loadDate" value="${attachment.loadDate}">
                         <input type="hidden" name="attachmentComment" value="${attachment.comment}">
@@ -286,8 +289,12 @@
                         <td>
                             <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="fa fa-download"></span> ${attachment.fileName}</button>
                         </td>
-                        <td><h6>${attachment.loadDate}</h6></td>
-                        <td><h6>${attachment.comment}</h6></td>
+                        <td>
+                            <h6>${attachment.loadDate}</h6>
+                        </td>
+                        <td>
+                            <h6>${attachment.comment}</h6>
+                        </td>
                         <td>
                             <div class='ctrlBtn btn-group'>
                                 <button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>
@@ -299,7 +306,10 @@
                     </tbody>
                 </table>
             </div>
+
         </form>
-        <script type="text/javascript" src="js/editing.js" />
+
+        <script type="text/javascript" src="js/editing.js"></script>
     </body>
+
 </html>

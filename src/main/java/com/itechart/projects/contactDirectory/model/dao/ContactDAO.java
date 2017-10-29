@@ -13,11 +13,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
     private Connection connection;
 
+    private final String SQL_GET_CONTACT_THAT_BITHDAY_TODAY = "select contact.idContact, contact.name, contact.surname\n"
+            + "from contact\n"
+            + " where contact.deleted is null\n"
+            + " and DAYOFMONTH(contact.dob) = DAYOFMONTH(CURDATE()) and MONTH(contact.dob) = MONTH(CURDATE())";
+//    private final String SQL_GET_CONTACT_THAT_BITHDAY_TODAY = "{call findContactsHaveBirthday()}";
     private final String SQL_UPDATE_CONTACT_PHOTO = "UPDATE contact set contact.photoUrl = ? where contact.idContact = ?";
     private final String SQL_FIND_ALL_CONTACTS = "{call findAllContacts(?, ?)}";
     private final String SQL_RECORDS_COUNT = "SELECT COUNT(*) FROM contact WHERE contact.deleted IS NULL";
@@ -32,9 +39,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
     public List<Contact> findAll(Integer begin, Integer length) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_FIND_ALL_CONTACTS);
             if (begin != null) {
@@ -76,6 +83,7 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return contacts;
@@ -83,9 +91,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
     public int getRecordsCount() throws DAOException {
         Statement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.createStatement();
 
@@ -95,10 +103,13 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 return resultSet.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.error(e);
+            LOGGER.error("Can't get records  count:\nConnection: " + connection
+                    + "\nStatement: " + statement, e);
+
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return 0;
@@ -107,9 +118,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
     public Contact findEntityById(Integer id) throws DAOException {
         CallableStatement statement = null;
         Contact contact = new Contact();
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_FIND_BY_ID);
 
@@ -136,10 +147,12 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 contact.setPhotoUrl(resultSet.getString(16));
             }
         } catch (SQLException e) {
-            LOGGER.error(e);
+            LOGGER.error("Can't find contact by ID:\nConnection: " + connection
+                    + "\nStatement: " + statement, e);
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return contact;
@@ -148,9 +161,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
     public List<Contact> search(Contact from, Contact to, Integer begin, Integer length) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall("{call contactSearching(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
             statement.setString(1, from.getName());
@@ -199,10 +212,13 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 contacts.add(contact);
             }
         } catch (SQLException e) {
-            LOGGER.error(e);
+            LOGGER.error("Can't search contacts:\nConnection: " + connection
+                    + "\nStatement: " + statement, e);
+
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return contacts;
@@ -211,9 +227,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
     public int searchCount(Contact from, Contact to) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall("{call countContactSearching(?,?,?,?,?,?,?,?,?,?,?,?)}");
             statement.setString(1, from.getName());
@@ -243,10 +259,13 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 return resultSet.getInt(1);
             }
         } catch (SQLException e) {
+            LOGGER.error("Can't get records  count in search:\nConnection: " + connection
+                    + "\nStatement: " + statement, e);
             LOGGER.error(e.getMessage());
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return 0;
@@ -254,25 +273,29 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
     public void delete(Integer id) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_DELETE_CONTACT);
             statement.setInt(1, id);
 
             statement.execute();
         } catch (SQLException ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error("Can't delete contact:\nConnection: " + connection
+                    + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Integer create(Contact entity) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_INSERT_CONTACT);
 
@@ -296,10 +319,12 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 return genKey.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Can't insert contact:\nConnection: " + connection
+                    + "\nStatement: " + statement, e);
             throw new DAOException(e);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return null;
@@ -307,9 +332,9 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
     public void update(Contact entity) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_UPDATE_CONTACT);
 
@@ -331,16 +356,20 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
             statement.execute();
         } catch (SQLException ex) {
-            LOGGER.error(ex);
+            LOGGER.error("Can't update contact:\nConnection: " + connection
+                    + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public void updatePhoto(Contact contact) throws DAOException {
         PreparedStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareStatement(SQL_UPDATE_CONTACT_PHOTO);
 
@@ -349,19 +378,21 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
 
             statement.executeUpdate();
         } catch (SQLException ex) {
-            LOGGER.error(ex);
+            LOGGER.error("Can't update photo:\nConnection: " + connection
+                    + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Contact findContactByEmail(String email) throws DAOException {
         Contact contact = new Contact();
         CallableStatement statement = null;
-        if (connection == null) {
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(SQL_FIND_BY_EMAIL);
             statement.setString(1, email);
@@ -386,13 +417,47 @@ public class ContactDAO extends AbstractDAO<Integer, Contact> {
                 contact.setPhotoUrl(resultSet.getString(16));
             }
         } catch (SQLException ex) {
-            LOGGER.error(ex);
+            LOGGER.error("Can't find photo by ID:\nConnection: " + connection
+                    + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return contact;
+    }
+
+    public List<Contact> findContactThatHaveBirthdayToday() throws DAOException {
+        List<Contact> contacts = new ArrayList<>();
+        PreparedStatement statement = null;
+
+        connection = ConnectionManager.getConnection();
+
+        try {
+            statement = connection.prepareCall(SQL_GET_CONTACT_THAT_BITHDAY_TODAY);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Contact contact = new Contact();
+                contact.setId(resultSet.getInt(1));
+                contact.setName(resultSet.getString(2));
+                contact.setSurname(resultSet.getString(3));
+
+                contacts.add(contact);
+            }
+        } catch (SQLException ex) {
+            LOGGER.error("Can't find contacts that have birthday today:"
+                    + "\nConnection: " + connection
+                    + "\nStatement: " + statement, ex);
+            throw new DAOException(ex);
+        } finally {
+            closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
+        }
+
+        return contacts;
     }
 
     public ContactDAO(Connection connection) {

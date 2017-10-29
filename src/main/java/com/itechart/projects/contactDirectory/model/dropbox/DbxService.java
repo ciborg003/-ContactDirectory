@@ -9,11 +9,12 @@ import com.dropbox.core.v2.users.FullAccount;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class DbxService {
 
+    private static final Logger LOGGER = Logger.getRootLogger();
+    
     private DbxUser user;
     private DbxClientV2 client;
     private FullAccount account;
@@ -43,18 +44,18 @@ public class DbxService {
     public void uploadFile(InputStream file, String fileName) {
         try {
             FileMetadata metadata = client.files().uploadBuilder(fileName).uploadAndFinish(file);
-        } catch (DbxException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (DbxException | IOException ex) {
+            LOGGER.error("Upload File error", ex);
         }
     }
 
     public void deleteFile(String path) {
         try {
-            Metadata metadata = client.files().delete(path);
+            if (this.isExists(path)) {
+                Metadata metadata = client.files().delete(path);
+            }
         } catch (DbxException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Delete File error", ex);
         }
     }
 
@@ -67,12 +68,12 @@ public class DbxService {
             System.out.println(client == null);
             ex.printStackTrace();
         } catch (DbxException | IOException ex) {
-            Logger.getLogger(DbxService.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Read File error", ex);
         } finally {
             try {
                 stream.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOGGER.error("Close stream after reading file error", ex);
             }
         }
 
@@ -82,22 +83,20 @@ public class DbxService {
         try {
             FileMetadata metadata = client.files().downloadBuilder(path).download(null);
         } catch (NullPointerException ex) {
-        } catch (DbxException e) {
-            return false;
-        } catch (IOException e) {
+        } catch (DbxException | IOException e) {
             return false;
         }
 
         return true;
     }
-    
-    public long getSize(String path){
+
+    public long getSize(String path) {
         try {
             return client.files().downloadBuilder(path).start().getResult().getSize();
         } catch (DbxException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Get file size error", ex);
         }
-        
+
         return 0;
     }
 
@@ -116,6 +115,5 @@ public class DbxService {
     public void setAccount(FullAccount account) {
         this.account = account;
     }
-    
-    
+
 }

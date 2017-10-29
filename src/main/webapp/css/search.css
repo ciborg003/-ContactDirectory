@@ -16,5 +16,28 @@ div.input-group {
 }
 
 #search{
-    padding-bottom: 15px;
+/*    padding-bottom: 15px;*/
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.main-container-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container-info {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.input-group {
+    height: 60px;
+}
+select.form-control:not([size]):not([multiple]) {
+    height: 100%;
 }

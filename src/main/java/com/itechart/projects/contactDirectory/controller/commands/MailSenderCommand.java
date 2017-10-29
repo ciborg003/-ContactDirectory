@@ -9,13 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.itechart.projects.contactDirectory.model.mail.MailService;
 import com.itechart.projects.contactDirectory.model.stringTemplates.MsgRender;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
 
 public class MailSenderCommand extends CommandProcess {
 

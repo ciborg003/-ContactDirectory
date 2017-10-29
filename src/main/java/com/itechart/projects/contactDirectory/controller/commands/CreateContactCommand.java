@@ -14,18 +14,19 @@ import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -98,10 +99,18 @@ public class CreateContactCommand extends CommandProcess {
                 FileItem item = (FileItem) iter.next();
 
                 if (item.isFormField()) {
-                    formField(item);
                     String name = item.getFieldName();
                     String value = item.getString("UTF-8");
                     LOGGER.info(name + ": " + value);
+                    if (!formField(item)) {
+                        LOGGER.warn("Bad value of " + name + ": " + value);
+                        try {
+                            request.getRequestDispatcher("error.jsp")
+                                    .forward(request, response);
+                        } catch (ServletException ex) {
+                            LOGGER.error("Request dispather error", ex);
+                        }
+                    }
                 } else {
                     LOGGER.info("FieldName: " + item.getFieldName());
                     LOGGER.info("stream size: " + item.getSize());
@@ -204,24 +213,31 @@ public class CreateContactCommand extends CommandProcess {
         }
     }
 
-    private void formField(FileItem item) throws UnsupportedEncodingException, DAOException {
+    private boolean formField(FileItem item) throws UnsupportedEncodingException, DAOException {
         String name = item.getFieldName();
         String value = item.getString("UTF-8");
         System.out.println(name + ": " + value);
 
         switch (name) {
             case "fName":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && validateWord(value)
+                        && value.length() < 21) {
                     contact.setName(value);
+                } else {
+                    return false;
                 }
                 break;
             case "lName":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && validateWord(value)
+                        && value.length() < 21) {
                     contact.setSurname(value);
+                } else {
+                    return false;
                 }
                 break;
             case "patronymic":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && validateWord(value)
+                        && value.length() < 21) {
                     contact.setPatronymic(value);
                 }
                 break;
@@ -239,7 +255,8 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "nation":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 46) {
                     contact.setNationality(value);
                 }
                 break;
@@ -249,12 +266,14 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "webSite":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 101) {
                     contact.setWebSite(value);
                 }
                 break;
             case "email":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 46) {
                     contact.setEmail(value);
                 }
                 break;
@@ -264,22 +283,26 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "country":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 21) {
                     contact.setCountry(value);
                 }
                 break;
             case "city":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 21) {
                     contact.setCity(value);
                 }
                 break;
             case "streetHouseRoom":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 46) {
                     contact.setStreetHouseRoom(value);
                 }
                 break;
             case "index":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && value.length() < 46) {
                     contact.setIndexNumber(value);
                 }
                 break;
@@ -288,12 +311,18 @@ public class CreateContactCommand extends CommandProcess {
                 break;
             case "phoneNumber":
                 phone = new Phone();
-                phone.setCountryCode(value.split("-")[0]);
-                phone.setOperatorCode(value.split("-")[1]);
-                phone.setPhoneNumber(value.split("-")[2]);
+                if (validatePhone(value)) {
+                    phone.setCountryCode(value.split("-")[0]);
+                    phone.setOperatorCode(value.split("-")[1]);
+                    phone.setPhoneNumber(value.split("-")[2]);
+                } else {
+                    phoneAction = "none";
+                }
                 break;
             case "phoneComment":
-                phone.setComment(value);
+                if (value.length() < 256) {
+                    phone.setComment(value);
+                }
                 break;
             case "phoneType":
                 phone.setPhoneType(EnumPhoneType.valueOf(value));
@@ -308,12 +337,16 @@ public class CreateContactCommand extends CommandProcess {
                 attachment.setLoadDate(new Timestamp(System.currentTimeMillis()));
                 break;
             case "attachmentComment":
-                attachment.setComment(value);
+                if (value.length() < 256) {
+                    attachment.setComment(value);
+                }
                 break;
             case "photoAction":
                 this.photoAction = value;
                 break;
         }
+
+        return true;
     }
 
     private void proccessPhones() {

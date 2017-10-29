@@ -24,9 +24,9 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
 
     public Integer createAttachment(Attachment attachment) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(CREATE_ATTACHMENT);
 
@@ -45,6 +45,7 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return null;
@@ -53,9 +54,9 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
     public List<Attachment> findAttachmentsByContact(Contact contact) throws DAOException {
         List<Attachment> list = new ArrayList<>();
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(FIND_ATTACHMENTS);
             statement.setInt(1, contact.getId());
@@ -78,6 +79,7 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return list;
@@ -85,12 +87,12 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
 
     public void updateAttachment(Attachment attachment) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(UPDATE_ATTACHMENT);
-            
+
             statement.setInt(1, attachment.getId());
             statement.setTimestamp(2, attachment.getLoadDate());
             statement.setString(3, attachment.getUrl());
@@ -104,15 +106,16 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Attachment getAttachmentByID(Integer id) throws DAOException {
         CallableStatement statement = null;
         Attachment attachment = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(FIND_ATTACHMENT_BY_ID);
 
@@ -133,6 +136,7 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return attachment;
@@ -140,9 +144,9 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
 
     public void deleteAttachment(Attachment attachment) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(DELETE_ATTACHMENT);
 
@@ -153,6 +157,7 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
@@ -163,7 +168,5 @@ public class AttachmentDAO extends AbstractDAO<Integer, Attachment> {
         LOGGER.info("Connection is " + connection);
         this.connection = connection;
     }
-    
-    
 
 }

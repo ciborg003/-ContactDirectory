@@ -26,9 +26,16 @@ function showPhonePopup(state) {
     document.getElementById("pNumber").value = '';
     document.getElementById("mobileType").checked = 'true';
     document.getElementById("phoneComment").value = "";
+    
+    document.getElementById("cCode").style.borderColor = "";
+    document.getElementById("oCode").style.borderColor = "";
+    document.getElementById("pNumber").style.borderColor = "";
+    document.getElementById("phoneComment").style.borderColor = "";
 }
 
 function savePhone(button) {
+    var isValidForm = true;
+    
     var countryCode = document.getElementById("cCode").value;
     var operatorCode = document.getElementById("oCode").value;
     var phoneNumber = document.getElementById("pNumber").value;
@@ -37,19 +44,31 @@ function savePhone(button) {
     var comment = document.getElementById("phoneComment").value;
 
     if (!(+countryCode) || countryCode.length < 3 || countryCode.length > 4) {
-        alert("Enter valid country code");
-        return;
+        document.getElementById("cCode").style.borderColor = "red";
+        isValidForm = false;
+    } else {
+        document.getElementById("cCode").style.borderColor = "";
     }
     if (!(+operatorCode) || operatorCode.length !== 2) {
-        alert("Enter valid operator code");
-        return;
+        document.getElementById("oCode").style.borderColor = "red";
+        isValidForm = false;
+    } else {
+        document.getElementById("oCode").style.borderColor = "";
     }
     if (!(+phoneNumber) || phoneNumber.length !== 7) {
-        alert("Enter valid phone numberrr");
-        return;
+        document.getElementById("pNumber").style.borderColor = "red";
+        isValidForm = false;
+    } else {
+        document.getElementById("pNumber").style.borderColor = "";
     }
     if (comment.length > 255) {
-        alert("comment is too big");
+        document.getElementById("phoneComment").style.borderColor = "red";
+        isValidForm = false;
+    } else {
+        document.getElementById("phoneComment").style.borderColor = "";
+    }
+    
+    if (!isValidForm){
         return;
     }
 
@@ -67,7 +86,7 @@ function savePhone(button) {
         var inputPhoneID = document.createElement("INPUT");
         inputPhoneID.name = 'phoneID';
         inputPhoneID.type = 'hidden';
-        inputPhoneID. value = 'null'; 
+        inputPhoneID.value = 'null';
 
         td1 = document.createElement("TD");
         td2 = document.createElement("TD");
@@ -216,15 +235,18 @@ function deletePhones() {
 
 //---------------ATACHMENTS_ACTIONS---------------------------------
 function showAttachmentPopup(state) {
-    
+
     document.getElementById("wrap").style.display = state;
     document.getElementById("popupAttachment").style.display = state;
 
     document.getElementById('file').value = '';
     document.getElementById('attachmentComment').value = '';
+    
+    document.getElementById("attachmentComment").style.borderColor = '';
 }
 
 function saveAttachment() {
+    var isValidForm = true;
     var now = new Date();
 
     var file = document.getElementById("file");
@@ -238,6 +260,13 @@ function saveAttachment() {
         comment = '';
     } else if (comment.length > 255) {
         document.getElementById("attachmentComment").style.borderColor = 'red';
+        isValidForm = false;
+        return;
+    } else {
+        document.getElementById("attachmentComment").style.borderColor = '';
+    }
+    
+    if(!isValidForm){
         return;
     }
 
@@ -333,9 +362,9 @@ function saveAttachment() {
     td0.innerHTML = "";
     td0.appendChild(file);
     file.removeAttribute('id');
-    
+
     document.getElementById('select-file').innerHTML = "<label for='file'>Select file:</label>"
-                        + "<input type='file' id='file' name='data' class='form-control-file'>";
+            + "<input type='file' id='file' name='data' class='form-control-file'>";
 
     tr.appendChild(td0);
     tr.appendChild(td1);
@@ -379,13 +408,13 @@ function deleteAttachment(btn) {
 
 
 //----------------------------------------------------------------
-function changePhoto(){
+function changePhoto() {
     var pattern = /\.(gif|jpg|jpeg|tiff|png)$/i;
-    
+
     var photoSelect = document.getElementById('selectPhoto');
     var result = photoSelect.value.match(pattern);
-    
-    if (!result){
+
+    if (!result) {
         alert('invalid image');
         var newPhotoSelect = document.createElement('input');
         newPhotoSelect.type = 'file';
@@ -395,13 +424,9 @@ function changePhoto(){
         photoSelect = newPhotoSelect;
         return;
     }
-    
+
     var photoAction = document.getElementById("photoAction");
     photoAction.value = 'change';
-}
-
-function checkForm() {
-    document.form.submit();
 }
 
 function changeGender() {
@@ -433,9 +458,90 @@ function getPhoneType(isMobile) {
 }
 
 function saveContact() {
-    document.forms[0].submit();
-}
+    var isValidForm = true;
 
+    if (!validateWord(document.getElementById('fName').value
+            || document.getElementById('fName').value.length < 1)
+            || document.getElementById('fName').value.length > 20) {
+        document.getElementById('fName').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('fName').style.borderColor = '';
+    }
+    if (!validateWord(document.getElementById('lName').value)
+            || document.getElementById('lName').value.length < 1
+            || document.getElementById('lName').value.length > 20) {
+        document.getElementById('lName').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('lName').style.borderColor = '';
+    }
+    if (!validateWord(document.getElementById('patronymic').value
+            || document.getElementById('patronymic').value.length > 20)) {
+        document.getElementById('patronymic').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('fName').style.borderColor = 'patronymic';
+    }
+    if ((document.getElementById('nation').value.length > 0
+        && !validateWord(document.getElementById('nation').value))
+            || document.getElementById('nation').value.length > 45) {
+        document.getElementById('nation').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('nation').style.borderColor = '';
+    }
+    if (document.getElementById('webSite').value.length > 100) {
+        document.getElementById('webSIte').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('webSite').style.borderColor = '';
+    }
+    if (document.getElementById('job').value.length > 45) {
+        document.getElementById('job').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('job').style.borderColor = '';
+    }
+    if (!validateEmail(document.getElementById('email').value)
+            || document.getElementById('email').value.length > 45) {
+        document.getElementById('email').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('email').style.borderColor = '';
+    }
+    if ((document.getElementById('country').value.length > 1 
+            && !validateWord(document.getElementById('country').value))
+            || document.getElementById('country').value.length > 20) {
+        document.getElementById('country').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('country').style.borderColor = '';
+    }
+    if (document.getElementById('city').value.length > 20) {
+        document.getElementById('city').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('city').style.borderColor = '';
+    }
+    if (document.getElementById('streetHouseRoom').value.length > 45) {
+        document.getElementById('streetHouseRoom').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('streetHouseRoom').style.borderColor = '';
+    }
+    if (document.getElementById('index').value.length > 45) {
+        document.getElementById('index').style.borderColor = 'red';
+        isValidForm = false;
+    } else {
+        document.getElementById('index').style.borderColor = '';
+    }
+
+    if (isValidForm) {
+        document.forms[0].submit();
+    }
+}
+ 
 function downloadFile(button) {
     var form = document.createElement('form');
     form.method = 'get';

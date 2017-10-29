@@ -1,0 +1,10 @@
+.tr-custom {
+/*    margin-top: 5px;*/
+    border-top: 1px solid #f2f2f2;
+    border: 1px solid #f2f2f2;
+}
+.tr-custom:hover {
+    /*border: 1px solid #eb1c23;*/
+    background-color: #ff7a7a;
+    transition: all 0.4s ease;
+}

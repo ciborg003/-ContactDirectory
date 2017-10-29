@@ -1,0 +1,17 @@
+body {
+    background-color: #ff9999;
+}
+
+.content-container {
+    margin-top: 90px;
+    text-align: center;
+    color: white;
+}
+
+.content-header {
+    font-size: 50pt;
+}
+
+.content {
+    font-size: 20pt;
+}

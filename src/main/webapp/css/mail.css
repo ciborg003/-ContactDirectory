@@ -22,3 +22,21 @@ p{
 .row {
     padding-bottom: 10px;
 }
+
+.span-input_group-email {
+    padding: 0;
+}
+
+.button-input_group-email {
+    border-radius: 0;
+    background-color: #eb1c23;
+    border-color: #eb1c23;
+}
+.button-input_group-email:hover {
+    background-color: #c41b21;
+    border-color: #c41b21;
+}
+
+.main-container{
+    margin-top: 50px;
+}

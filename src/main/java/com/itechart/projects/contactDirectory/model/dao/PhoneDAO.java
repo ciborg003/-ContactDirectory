@@ -29,9 +29,8 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
     public List<Phone> findPhonesByContact(Contact contact) throws DAOException {
         List<Phone> list = new ArrayList<>();
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareCall(FIND_PHONES);
@@ -57,6 +56,7 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return list;
@@ -64,9 +64,9 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
 
     public void updatePhone(Phone phone) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(UPDATE_PHONE);
 
@@ -84,14 +84,15 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Integer createPhone(Phone phone) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
+
+        connection = ConnectionManager.getConnection();
+
         try {
             statement = connection.prepareCall(INSERT_PHONE);
 
@@ -111,6 +112,7 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
 
         return null;
@@ -118,24 +120,25 @@ public class PhoneDAO extends AbstractDAO<Integer, Phone> {
 
     public void deletePhone(Phone phone) throws DAOException {
         CallableStatement statement = null;
-        if (connection == null){
-            connection = ConnectionManager.getConnection();
-        }
-        try {    
+
+        connection = ConnectionManager.getConnection();
+
+        try {
             statement = connection.prepareCall(DELETE_PHONE);
-            
+
             statement.setInt(1, phone.getId());
-            
+
             statement.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
+            ConnectionManager.closeConnection(connection);
         }
     }
 
     public PhoneDAO() {
-    }   
-    
+    }
+
 }

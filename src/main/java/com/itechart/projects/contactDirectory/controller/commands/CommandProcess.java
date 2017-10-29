@@ -9,25 +9,28 @@ import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
-import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import java.util.regex.Pattern;
+
 
 public abstract class CommandProcess {
 
     protected ContactDAO contactDAO;
     protected PhoneDAO phoneDAO;
     protected AttachmentDAO attachmentDAO;
-    private Connection connection;
     protected final static Logger LOGGER = Logger.getRootLogger();
+    
+    private static final String patternWord = "^[A-Za-z]+'?[A-Za-z]+$|^[А-Яа-я]+$";
+    private static final String patternPhone = "^\\+?[0-9]{2,3}-[0-9]{2}-[0-9]{7}$";
 
     public CommandProcess() {
 //        connection = ConnectionManager.getConnection();
@@ -194,12 +197,17 @@ public abstract class CommandProcess {
 
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (connection != null) {
-            connection.close();
-        }
+    protected boolean validateWord(String word){
+        Pattern p = Pattern.compile(patternWord);
+        Matcher matcher = p.matcher(word);
+        
+        return matcher.find();
     }
-
+    
+    protected boolean validatePhone(String phone){
+        Pattern p = Pattern.compile(patternPhone);
+        Matcher matcher = p.matcher(phone);
+        
+        return matcher.find();
+    }
 }

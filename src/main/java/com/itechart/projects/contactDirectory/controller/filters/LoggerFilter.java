@@ -32,7 +32,7 @@ public class LoggerFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         boolean isMultipart = ServletFileUpload.isMultipartContent((HttpServletRequest) request);
-        if (!isMultipart) {
+        if (!isMultipart && request.getParameterNames().hasMoreElements()) {
             LOGGER.info("------------REQUEST_PARAMS--------------");
             Enumeration<String> params = request.getParameterNames();
             String param, value;
@@ -41,10 +41,7 @@ public class LoggerFilter implements Filter {
                 value = request.getParameter(param);
                 LOGGER.info(param + ": " + value);
             }
-        } else {
-            LOGGER.info("request is encrypted");
-        }
-        
+        }        
         chain.doFilter(request, response);
     }
 

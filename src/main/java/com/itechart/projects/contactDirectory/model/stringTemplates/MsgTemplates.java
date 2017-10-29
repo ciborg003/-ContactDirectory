@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public enum MsgTemplates {
-    HappyBirthday("HappyBirthday");
+    HappyBirthday("HappyBirthday"),
+    BIRTHDAY_LIST("BirthdayList");
     
     private final static String STRING_TEMPLATE_PROPERTY = "StringTemplates";
     private String msg;
     private String msgName;
-    private List<String> tags;
 
     public String getMsg() {
         return msg;

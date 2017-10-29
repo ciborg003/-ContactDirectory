@@ -1,5 +1,9 @@
 #save{
+    padding: 10px;
     padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content:flex-end;
 }
 
 image {
@@ -12,6 +16,7 @@ div.input-group{
 }
 
 #form {
+    margin-top: 40px;
     padding: 20px;
 }
 
@@ -43,3 +48,78 @@ thead{
 div.container-fluid{
     padding: 5px;
 } 
+
+.mini-photo {
+    height: 387px;
+    width: 340px;
+    border-radius: 5px;
+}
+
+.main-container_photo_and_info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+}
+
+.container-photo {
+    display: flex;
+    height: 400px;
+    width: 340px;
+    margin-right: 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.container-main_info {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    height: 60px;
+}
+select.form-control:not([size]):not([multiple]) {
+    height: 100%;
+}
+.input-group select{
+    vertical-align: middle;
+}
+.main-container-edd-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container-edd-info {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.table-bordered thead {
+    color: #464a4c;
+    background-color: #eceeef;
+}
+
+.custom-control-input:checked ~ .custom-control-indicator {
+    background-color: #eb1c23;
+}
+.custom-control-input:focus~.custom-control-indicator {
+    -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 3px #eb1c23;
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #eb1c23;
+}
+
+.test {
+/*    margin-top: 5px;*/
+    border-top: 1px solid #f2f2f2;
+    border: 1px solid #f2f2f2;
+}
+.test:hover {
+    /*border: 1px solid #eb1c23;*/
+    background-color: #ff7a7a;
+    transition: all 0.4s ease;
+}
