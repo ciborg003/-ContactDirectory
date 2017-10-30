@@ -59,9 +59,12 @@
                             <select class="form-control" name="msgTemplate" onchange="changeTemplate()">
                                 <option>None</option>
                                 <c:forEach items="${templates}" var="template">
-                                    <option>${template.msgName}<input type="hidden" value="${template.msg}" id="${template.msgName}"></option>
+                                    <option>${template.msgName}</option>
                                 </c:forEach>
                             </select>
+                            <c:forEach items="${templates}" var="template">
+                                <input type="hidden" value="${template.msg}" id="${template.msgName}">
+                            </c:forEach>
                         </div>
                     </div>
                     <div class="row">
@@ -81,7 +84,6 @@
         <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="css/mail.css">
         <link rel="stylesheet" type="text/css" href="css/navbar.css">
-        <!--<link rel="stylesheet" type="text/css" href="css/header.css">-->
         <link rel="stylesheet" type="text/css" href="css/button-style.css">
         <script type="text/javascript" src="js/mail.js"></script>
         <script type="text/javascript" src="js/validation.js"></script>
