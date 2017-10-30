@@ -19,6 +19,7 @@
     <body>
         <div id="wrap">
             <input type="hidden" id="popUpAction" value="none">
+<!--|||||||||||||||||||||||PopUp PHONE||||||||||||||||||||||||||||||||-->
             <div id="popupPhone">
                 <div class="container-fluid">
                     <h4>Editing Phone Number</h4>
@@ -60,6 +61,7 @@
                     </div>
                 </div>
             </div>
+<!--|||||||||||||||||||||||PopUp ATTACHMENT||||||||||||||||||||||||||||||||-->
             <div id="popupAttachment">
                 <h4>Editing Attachment</h4>
                 <div class="container">
@@ -80,12 +82,12 @@
                     <button type="button" class="button-red btn" onclick="showAttachmentPopup('none');">Cancel</button>
                 </div>
             </div>
+            <jsp:include page="popup-submit.jsp"></jsp:include>
         </div>
 
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Editing Contact</h1> 
         <form id="form" action="ServletController?action=${action}" method="POST" enctype="multipart/form-data">
-            <!--<input type="hidden" value=${action} name="action" />-->
             <input type="hidden" name="contactId" value="${contact.id}" />
 
             <div class="main-container_photo_and_info">
@@ -103,16 +105,16 @@
                 <div class="container-main_info">
                     <div class="input-group">
                         <span class="input-group-addon">FirstName</span>
-                        <input name="fName" type="text" class="form-control" placeholder="FirstName" value="${contact.name}">
+                        <input name="fName" id="fName" type="text" class="form-control" placeholder="FirstName" value="${contact.name}">
                     </div>
 
                     <div class="input-group">
                         <span class="input-group-addon">LastName</span>
-                        <input name="lName" type="text" class="form-control" placeholder="LastName" value="${contact.surname}">
+                        <input name="lName" id="lName"  type="text" class="form-control" placeholder="LastName" value="${contact.surname}">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Patronymic</span>
-                        <input name="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
+                        <input name="patronymic" id="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Birthday</span>
@@ -136,7 +138,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Nationality: </span>
-                        <input name="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
+                        <input name="nation" id ="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
                     </div>
                 </div>
             </div>
@@ -160,15 +162,15 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Web Site: </span>
-                        <input name="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
+                        <input name="webSite" id="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Email: </span>
-                        <input name="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
+                        <input name="email" id="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Current Work: </span>
-                        <input name="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
+                        <input name="job" id="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
                     </div>
                 </div>
                 <div class="container-edd-info">
@@ -176,39 +178,35 @@
 
                     <div class="input-group">
                         <span class="input-group-addon">Country: </span>
-                        <input name="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
+                        <input name="country" id="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">City: </span>
-                        <input name="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
+                        <input name="city" id="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Street, House, Room:</span>
-                        <input name="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
+                        <input name="streetHouseRoom" id="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Index: </span>
-                        <input name="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
+                        <input name="index" id="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
                     </div>
                 </div>
             </div>
             <div id="save">
-                <button type="submit" class="button-red btn btn-primary btn-md" padding=2 0px onclick="saveContact()">
+                <button type="button" class="button-red btn btn-primary btn-md" padding=20px onclick="saveContact()">
                     Save Contact
                 </button>
             </div>
 
-            <!--<input type="image" src="photos/noimage.jpg" id="photo" name="photo" alt="photo" class="thumbnail" onclick="changePhoto()">-->
-
-
-
-
+<!--||||||||||||||||||||||||||||||||||PHONE TABLE|||||||||||||||||||||||||||||||||||||| -->
             <div id="editingPhones">
                 <div id="phoneActions">
                     <div class="btn-group">
                         <button type="button" class=" btn btn-info btn-md" onclick="createPhone()">Add</button>
-                        <button type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
-                        <button type="button" class="btn btn-info btn-md">Edit</button>
+                        <button id ="phoneDelete" type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
+                        <button id ="phoneEdit" type="button" class="btn btn-info btn-md" onclick="editPhoneOnCheckbox()" disabled="">Edit</button>
                     </div>
 
                 </div>
@@ -260,6 +258,8 @@
                     </tbody>
                 </table>
             </div>
+
+<!--||||||||||||||||||||||||||||||||||ATTACHMENT TABLE|||||||||||||||||||||||||||||||||||||| -->
             <div id="editingAttachments">
                 <div id="attachmentActions">
                     <button type="button" class="btn btn-info btn-md" onclick="createAttachment()">
@@ -309,6 +309,7 @@
 
         </form>
 
+        <script type="text/javascript" src="js/validation.js"></script>
         <script type="text/javascript" src="js/editing.js"></script>
     </body>
 

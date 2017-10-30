@@ -1,6 +1,7 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.dropbox.core.DbxException;
+import static com.itechart.projects.contactDirectory.controller.commands.CommandProcess.LOGGER;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +44,11 @@ public class GetPhotoCommand extends CommandProcess {
             }
         } catch (DbxException | IOException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 

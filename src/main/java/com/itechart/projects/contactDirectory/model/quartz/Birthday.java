@@ -29,6 +29,7 @@ public class Birthday implements Job {
             ST st = new ST(template.getMsg());
             for (Contact c : contacts) {
 //                st.addAggr("users.{name, surname}", c.getName(), c.getSurname());
+                st.add("user", c);
             }
             Mail mail = new Mail();
             mail.setMessage(st.render());

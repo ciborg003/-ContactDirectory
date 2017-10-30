@@ -24,7 +24,6 @@
                                 <span class="span-input_group-email input-group-addon">
                                     <button type="button" class="button-input_group-email btn btn-info" onclick="addEmail()">
                                         Add email
-                                        <!--                                    <span class="fa fa-save" />-->
                                     </button>
                                 </span>
                                 <input id="attachEmail" type="text" class="form-control">
@@ -36,7 +35,7 @@
                         <div id="emailList" class="row">
                             <c:forEach items="${contactList}" var="contact">
                                 <div style="flex-direction: row" class="col-md-4">
-                                    <li class="list-group-item">
+                                    <li class="list-group-item">${contact.email}
                                         <button style="margin-left: auto; margin-right: 0em;" type="button" class="btn btn-info " onclick="deleteEmail(this)">
                                             <span class="fa fa-remove" />
                                         </button>

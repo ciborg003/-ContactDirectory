@@ -21,16 +21,29 @@ class GetMainPageCommand extends CommandProcess {
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         List<Contact> list = null;
         try {
-            list = contactDAO.findAll(null, null);
-
+            Integer begin = 1, length = 10;
+            if (request.getParameter("pageNumber") != null) {
+                begin = Integer.parseInt(request.getParameter("pageNumber"));
+            }
+            if (request.getParameter("recordsOnPage") != null) {
+                length = Integer.parseInt(request.getParameter("recordsOnPage"));
+            }
+            connection.commit();
+            list = contactDAO.findAll(begin - 1, length);
+            LOGGER.info("liat: ------------" + list.size());
             request.setAttribute("contactList", list);
-            request.setAttribute("pageNumber", 1);
-            request.setAttribute("recordsOnPage", 10);
+            request.setAttribute("pageNumber", begin);
+            request.setAttribute("recordsOnPage", length);
             request.setAttribute("recordsCount", contactDAO.getRecordsCount());
 
             request.getRequestDispatcher("index.jsp").forward(request, response);
-        } catch (DAOException | ServletException | IOException ex) {
+        } catch (DAOException | ServletException | IOException | SQLException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 }

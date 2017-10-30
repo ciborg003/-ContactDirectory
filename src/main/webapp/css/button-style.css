@@ -17,3 +17,23 @@
     background-color: #c41b21;
     border-color: #c41b21;
 }
+
+.btn-info.disabled, :disabled.btn-info{
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.custom-control-input:checked ~ .custom-control-indicator {
+    background-color: #eb1c23;
+}
+.custom-control-input:focus~.custom-control-indicator {
+    -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 3px #eb1c23;
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #eb1c23;
+}
+
+a {
+    color: #eb1c23;
+}
+a:hover {
+    color: #d11b21;
+}

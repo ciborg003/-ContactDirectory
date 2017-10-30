@@ -1,4 +1,4 @@
-#wrap{
+/*#wrap{
     display: block;
     opacity: 0.95;
     position: fixed;
@@ -8,7 +8,7 @@
     bottom: 0;
     padding: 16px;
     background-color: rgba(1, 1, 1, 0.725);
-    z-index: 9999;
+    z-index: 20;
     overflow: auto;
 }
 
@@ -22,14 +22,14 @@
     margin: 50px auto;
     display: flex;
     background: #fff;
-    z-index: 9999;
+    z-index: 20;
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
     padding: 16px;
-}
+}*/
 
 .popup-submit {
     width: 400px;
@@ -38,7 +38,6 @@
     display: block;
     background: #fff;
     z-index: 200;
-/*    position: fixed;*/
     left: 0;
     right: 0;
     top: 0;

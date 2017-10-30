@@ -1,7 +1,8 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
-import com.itechart.projects.contactDirectory.model.dao.AttachmentDAO;
-import com.itechart.projects.contactDirectory.model.dao.ContactDAO;
+import com.itechart.projects.contactDirectory.model.dao.NewAttachmentDAO;
+import com.itechart.projects.contactDirectory.model.dao.NewContactDAO;
+import com.itechart.projects.contactDirectory.model.dao.NewPhoneDAO;
 import com.itechart.projects.contactDirectory.model.dao.PhoneDAO;
 import com.itechart.projects.contactDirectory.model.entity.Contact;
 import com.itechart.projects.contactDirectory.model.entity.EnumFamilyState;
@@ -9,7 +10,9 @@ import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,19 +27,20 @@ import java.util.regex.Pattern;
 
 public abstract class CommandProcess {
 
-    protected ContactDAO contactDAO;
-    protected PhoneDAO phoneDAO;
-    protected AttachmentDAO attachmentDAO;
+    protected Connection connection;
+    protected NewContactDAO contactDAO;
+    protected NewPhoneDAO phoneDAO;
+    protected NewAttachmentDAO attachmentDAO;
     protected final static Logger LOGGER = Logger.getRootLogger();
     
     private static final String patternWord = "^[A-Za-z]+'?[A-Za-z]+$|^[А-Яа-я]+$";
     private static final String patternPhone = "^\\+?[0-9]{2,3}-[0-9]{2}-[0-9]{7}$";
 
     public CommandProcess() {
-//        connection = ConnectionManager.getConnection();
-        this.contactDAO = new ContactDAO();
-        this.attachmentDAO = new AttachmentDAO();
-        this.phoneDAO = new PhoneDAO();
+        connection = ConnectionManager.getConnection();
+        this.contactDAO = new NewContactDAO(connection);
+        this.attachmentDAO = new NewAttachmentDAO(connection);
+        this.phoneDAO = new NewPhoneDAO(connection);
     }
 
     public abstract void execute(HttpServletRequest request, HttpServletResponse response);

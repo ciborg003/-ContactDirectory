@@ -17,6 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -48,6 +51,8 @@ public class SaveContactChangesCommand extends CommandProcess {
     private String phoneAction = "";
     private List<String> fileNames = new ArrayList<>();
     Map<String, String> map = new HashMap<>();
+    
+    private Savepoint savepoint;
 
     public SaveContactChangesCommand() {
         bundle = ResourceBundle.getBundle(DBX_PROPERTY);
@@ -106,17 +111,21 @@ public class SaveContactChangesCommand extends CommandProcess {
                     }
                 }
             }
-
+            connection.commit();
+            savepoint = connection.setSavepoint();
             contactDAO.update(contact);
             proccessPhones();
 
             processRequest(request, response);
-        } catch (DAOException | IOException | FileUploadException e) {
+        } catch (DAOException | IOException | FileUploadException | SQLException e) {
             LOGGER.error(e.getMessage());
             try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (IOException ex) {
-                LOGGER.error(ex.getMessage());
+                if (connection != null){
+                    connection.rollback(savepoint);
+                }
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException | SQLException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
             }
         }
     }

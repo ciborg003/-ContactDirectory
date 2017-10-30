@@ -11,12 +11,9 @@ public class Main {
     private static final String pattern = "^[A-Za-z]+'?[A-Za-z]+$|^[А-Яа-я]+$";
     
     public static void main(String[] args) throws DAOException {
-        System.out.println(validatePhone("+375-44-8655888"));
-        System.out.println(validatePhone("375-44-8655888"));
-        System.out.println(validatePhone("+375-44-865888"));
-        System.out.println(validatePhone("+375-4-8655888"));
-        System.out.println(validatePhone("+35-44-8655888"));
-        System.out.println(validatePhone("+37544-8655888"));
+        String value = "NONE";
+        System.out.println(value != null && value.trim().length() > 0 
+                        && !value.toLowerCase().equals("none"));
     }
     protected static boolean validateWord(String word){
         Pattern p = Pattern.compile(pattern);

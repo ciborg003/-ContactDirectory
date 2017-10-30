@@ -10,10 +10,7 @@ import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import java.io.IOException;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,10 +26,9 @@ public class UpdateContactCommand extends CommandProcess {
             Integer idContact = Integer.parseInt(request.getParameter("contactID"));
             Contact contact = contactDAO.findEntityById(idContact);
 
-            List<Phone> phones = new PhoneDAO().findPhonesByContact(contact);
+            List<Phone> phones = phoneDAO.findPhonesByContact(contact);
             request.setAttribute("phoneList", phones);
-            List<Attachment> attachments = new AttachmentDAO().
-                    findAttachmentsByContact(contact);
+            List<Attachment> attachments = attachmentDAO.findAttachmentsByContact(contact);
             request.setAttribute("attachmentList", attachments);
 
             request.setAttribute("contact", contact);
@@ -44,6 +40,11 @@ public class UpdateContactCommand extends CommandProcess {
             request.getRequestDispatcher("editing.jsp").forward(request, response);
         } catch (ServletException | IOException | DAOException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 }

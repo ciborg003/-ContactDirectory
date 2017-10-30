@@ -15,18 +15,7 @@
     </head>
 
     <body>
-<!--        <header class="page-header">
-            <div class="container-logo">
-                <h1><a href="http://localhost:8080/ServletController/m">Contact Directory</a></h1>
-            </div>
-            <div class="container-button_search">
-                <div class="button-search">
-                    <a href="?action=getSearchPage">
-                        <div>Search</div>
-                    </a>
-                </div>
-            </div>
-        </header>-->
+        
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Contact searching</h1>
 
@@ -57,7 +46,7 @@
                     <div class="input-group">
                         <span class="input-group-addon">Gender</span>
                         <select class="form-control" name="gender" value="${contact.gender}">
-                            <option selected="">None</option>
+                            <option selected="">Any</option>
                             <c:forEach items="${genders}" var="gender">
                                 <option>${gender}</option>
                             </c:forEach>
@@ -74,7 +63,7 @@
                     <div class="input-group">
                         <span class="input-group-addon">Family State</span>
                         <select class="form-control" name="familyState">
-                            <option selected="">None</option>
+                            <option selected="">Any</option>
                             <c:forEach items="${familyStates}" var="familyState">
                                 <option>${familyState}</option>
                             </c:forEach>

@@ -6,7 +6,6 @@ import com.itechart.projects.contactDirectory.model.entity.EnumFamilyState;
 import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,24 +22,31 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             + "from contact\n"
             + " where contact.deleted is null\n"
             + " and DAYOFMONTH(contact.dob) = DAYOFMONTH(CURDATE()) and MONTH(contact.dob) = MONTH(CURDATE())";
-    
+
     private final String SQL_UPDATE_CONTACT_PHOTO = "UPDATE contact set contact.photoUrl = ? where contact.idContact = ?";
-    private final String SQL_FIND_ALL_CONTACTS = "";
-    private final String SQL_RECORDS_COUNT = "SELECT COUNT(*) FROM contact WHERE contact.deleted IS NULL";
-    private final String SQL_INSERT_CONTACT = "";
-    private final String SQL_UPDATE_CONTACT = "";
-    private final String SQL_DELETE_CONTACT = "";
-    private final String SQL_FIND_BY_ID = "";
-    private final String SQL_FIND_BY_EMAIL = "";
+    private final String SQL_FIND_ALL_CONTACTS = "SELECT c.idContact, c.name, c.surname, c.patronymic, c.dob, c.gender, c.nation, c.familyState, c.job, c.country, c.city, c.streetHouseRoom, c.index, c.email, c.webSite, c.photoUrl  \n"
+            + "FROM contact c WHERE c.deleted IS NULL limit ?,?";
+    private final String SQL_RECORDS_COUNT = "SELECT COUNT(*) FROM contact c WHERE c.deleted IS NULL";
+    private final String SQL_INSERT_CONTACT = "insert into contact (name, surname, patronymic, dob, gender, nation, familyState, webSite, \n"
+            + "job, country, city, streetHouseRoom, contact.index, email, photoUrl) \n"
+            + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private final String SQL_UPDATE_CONTACT = "UPDATE contact AS c SET c.name = ?, c.surname = ?, c.patronymic = ?, c.dob = ?,\n"
+            + "c.gender = ?, c.nation = ?, c.familyState = ?, c.job = ?, c.country = ?,\n"
+            + "c.city = ?, c.streetHouseRoom = ?, c.index = ?, c.email = ?, c.webSite = ?\n"
+            + "WHERE c.idContact = ?";
+    private final String SQL_DELETE_CONTACT = "update contact set contact.deleted = now() where contact.idContact = ?;";
+    private final String SQL_FIND_BY_ID = "SELECT c.idContact, c.name, c.surname, c.patronymic, c.dob, c.gender, c.nation, c.familyState, c.job, c.country, c.city, c.streetHouseRoom, c.index, c.email, c.webSite, c.photoUrl\n"
+            + "FROM contact c WHERE c.idContact = ?";
+    private final String SQL_FIND_BY_EMAIL = "SELECT c.idContact, c.name, c.surname, c.patronymic, c.dob, c.gender, c.nation, c.familyState, c.job, c.country, c.city, c.streetHouseRoom, c.index, c.email, c.webSite, c.photoUrl\n"
+            + "FROM contact c WHERE c.email = ?";
 
     public List<Contact> findAll(Integer begin, Integer length) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_FIND_ALL_CONTACTS);
+            statement = connection.prepareStatement(SQL_FIND_ALL_CONTACTS);
             if (begin != null) {
                 statement.setInt(1, begin);
             } else {
@@ -61,9 +67,13 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                 contact.setSurname(resultSet.getString(3));
                 contact.setPatronymic(resultSet.getString(4));
                 contact.setDob(resultSet.getDate(5));
-                contact.setGender(EnumGender.valueOf(resultSet.getString(6).toUpperCase()));
+                if (resultSet.getString(6) != null) {
+                    contact.setGender(EnumGender.valueOf(resultSet.getString(6).toUpperCase()));
+                }
                 contact.setNationality(resultSet.getString(7));
-                contact.setFamilyState(EnumFamilyState.valueOf(resultSet.getString(8).toUpperCase()));
+                if (resultSet.getString(8) != null) {
+                    contact.setFamilyState(EnumFamilyState.valueOf(resultSet.getString(8).toUpperCase()));
+                }
                 contact.setJob(resultSet.getString(9));
                 contact.setCountry(resultSet.getString(10));
                 contact.setCity(resultSet.getString(11));
@@ -79,8 +89,9 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             LOGGER.error(e);
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return contacts;
@@ -89,8 +100,7 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
     public int getRecordsCount() throws DAOException {
         Statement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
             statement = connection.createStatement();
 
@@ -105,21 +115,21 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
 
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return 0;
     }
 
     public Contact findEntityById(Integer id) throws DAOException {
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
         Contact contact = new Contact();
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_FIND_BY_ID);
+            statement = connection.prepareStatement(SQL_FIND_BY_ID);
 
             statement.setInt(1, id);
 
@@ -148,8 +158,9 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                     + "\nStatement: " + statement, e);
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return contact;
@@ -157,12 +168,11 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
 
     public List<Contact> search(Contact from, Contact to, Integer begin, Integer length) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall("{call contactSearching(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+            statement = connection.prepareStatement("{call contactSearching(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
             statement.setString(1, from.getName());
             statement.setString(2, from.getSurname());
             statement.setString(3, from.getPatronymic());
@@ -214,8 +224,9 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
 
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return contacts;
@@ -223,12 +234,11 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
 
     public int searchCount(Contact from, Contact to) throws DAOException {
         List<Contact> contacts = new ArrayList<>();
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall("{call countContactSearching(?,?,?,?,?,?,?,?,?,?,?,?)}");
+            statement = connection.prepareStatement("{call countContactSearching(?,?,?,?,?,?,?,?,?,?,?,?)}");
             statement.setString(1, from.getName());
             statement.setString(2, from.getSurname());
             statement.setString(3, from.getPatronymic());
@@ -261,20 +271,20 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             LOGGER.error(e.getMessage());
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return 0;
     }
 
     public void delete(Integer id) throws DAOException {
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_DELETE_CONTACT);
+            statement = connection.prepareStatement(SQL_DELETE_CONTACT);
             statement.setInt(1, id);
 
             statement.execute();
@@ -283,18 +293,18 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                     + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Integer create(Contact entity) throws DAOException {
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_INSERT_CONTACT);
+            statement = connection.prepareStatement(SQL_INSERT_CONTACT, PreparedStatement.RETURN_GENERATED_KEYS);
 
             statement.setString(1, entity.getName());
             statement.setString(2, entity.getSurname());
@@ -311,62 +321,69 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             statement.setString(13, entity.getEmail());
             statement.setString(14, entity.getWebSite());
             statement.setString(15, entity.getPhotoUrl());
-            ResultSet genKey = statement.executeQuery();
+
+            int rows = statement.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("Contact connot be inserted into DB");
+            }
+
+            ResultSet genKey = statement.getGeneratedKeys();
             if (genKey.next()) {
                 return genKey.getInt(1);
             }
+            connection.commit();
         } catch (SQLException e) {
             LOGGER.error("Can't insert contact:\nConnection: " + connection
                     + "\nStatement: " + statement, e);
             throw new DAOException(e);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return null;
     }
 
     public void update(Contact entity) throws DAOException {
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_UPDATE_CONTACT);
+            statement = connection.prepareStatement(SQL_UPDATE_CONTACT);
 
-            statement.setInt(1, entity.getId());
-            statement.setString(2, entity.getName());
-            statement.setString(3, entity.getSurname());
-            statement.setString(4, entity.getPatronymic());
-            statement.setDate(5, entity.getDob());
-            statement.setString(6, entity.getGender().getDescription());
-            statement.setString(7, entity.getNationality());
-            statement.setString(8, entity.getFamilyState().getDescription());
-            statement.setString(9, entity.getJob());
-            statement.setString(10, entity.getCountry());
-            statement.setString(11, entity.getCity());
-            statement.setString(12, entity.getStreetHouseRoom());
-            statement.setString(13, entity.getIndexNumber());
-            statement.setString(14, entity.getEmail());
-            statement.setString(15, entity.getWebSite());
+            statement.setString(1, entity.getName());
+            statement.setString(2, entity.getSurname());
+            statement.setString(3, entity.getPatronymic());
+            statement.setDate(4, entity.getDob());
+            statement.setString(5, entity.getGender().getDescription());
+            statement.setString(6, entity.getNationality());
+            statement.setString(7, entity.getFamilyState().getDescription());
+            statement.setString(8, entity.getJob());
+            statement.setString(9, entity.getCountry());
+            statement.setString(10, entity.getCity());
+            statement.setString(11, entity.getStreetHouseRoom());
+            statement.setString(12, entity.getIndexNumber());
+            statement.setString(13, entity.getEmail());
+            statement.setString(14, entity.getWebSite());
+            statement.setInt(15, entity.getId());
 
-            statement.execute();
+            statement.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Can't update contact:\nConnection: " + connection
                     + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 
     public void updatePhoto(Contact contact) throws DAOException {
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
             statement = connection.prepareStatement(SQL_UPDATE_CONTACT_PHOTO);
 
@@ -379,19 +396,19 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                     + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Contact findContactByEmail(String email) throws DAOException {
         Contact contact = new Contact();
-        CallableStatement statement = null;
+        PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
-            statement = connection.prepareCall(SQL_FIND_BY_EMAIL);
+            statement = connection.prepareStatement(SQL_FIND_BY_EMAIL);
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -418,8 +435,9 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                     + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return contact;
@@ -429,8 +447,7 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
         List<Contact> contacts = new ArrayList<>();
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
-
+//        connection = ConnectionManager.getConnection();
         try {
             statement = connection.prepareCall(SQL_GET_CONTACT_THAT_BITHDAY_TODAY);
 
@@ -450,8 +467,9 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
                     + "\nStatement: " + statement, ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return contacts;

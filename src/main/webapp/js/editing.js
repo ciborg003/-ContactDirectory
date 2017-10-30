@@ -26,7 +26,7 @@ function showPhonePopup(state) {
     document.getElementById("pNumber").value = '';
     document.getElementById("mobileType").checked = 'true';
     document.getElementById("phoneComment").value = "";
-    
+
     document.getElementById("cCode").style.borderColor = "";
     document.getElementById("oCode").style.borderColor = "";
     document.getElementById("pNumber").style.borderColor = "";
@@ -35,7 +35,7 @@ function showPhonePopup(state) {
 
 function savePhone(button) {
     var isValidForm = true;
-    
+
     var countryCode = document.getElementById("cCode").value;
     var operatorCode = document.getElementById("oCode").value;
     var phoneNumber = document.getElementById("pNumber").value;
@@ -67,8 +67,8 @@ function savePhone(button) {
     } else {
         document.getElementById("phoneComment").style.borderColor = "";
     }
-    
-    if (!isValidForm){
+
+    if (!isValidForm) {
         return;
     }
 
@@ -78,6 +78,7 @@ function savePhone(button) {
 
     if (document.getElementById("popUpAction").value === 'create') {
         tr = document.createElement("TR");
+        tr.className = 'tr-custom';
 
         inputAction = document.createElement("INPUT");
         inputPNumber = document.createElement("INPUT");
@@ -146,9 +147,9 @@ function savePhone(button) {
     } else {
         inputPType.value = "Home";
     }
-    td1.innerHTML = "<label class='custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0'>"
-            + "<input type='checkbox' class='custom-control-input' onchange='checkBoxPhoneAction(this)'>"
-            + "<span class='custom-control-indicator'></span></label>";
+//    td1.innerHTML = "<label class='custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0'>"
+//            + "<input type='checkbox' class='custom-control-input' onchange='checkBoxPhoneAction(this)'>"
+//            + "<span class='custom-control-indicator'></span></label>";
     td2.innerHTML = "<h6>" + inputPNumber.value + "</h6>";
     if (isMobile) {
         td3.innerHTML = "<h6>Mobile</h6>";
@@ -162,6 +163,33 @@ function savePhone(button) {
     inputAction = null;
     phoneRaw = null;
     showPhonePopup('none');
+}
+
+function editPhoneOnCheckbox() {
+    if (selectedPhoneRows.length === 1) {
+        phoneRaw = selectedPhoneRows[0];
+    } else {
+        return;
+    }
+    
+    showPhonePopup('block');
+    
+    var inputs = phoneRaw.getElementsByTagName('INPUT');
+
+    var cCode = inputs[1].value.split('-')[0];
+    var oCode = inputs[1].value.split('-')[1];
+    var pNumber = inputs[1].value.split('-')[2];
+
+    document.getElementById("popUpAction").value = 'edit';
+    document.getElementById("cCode").value = cCode;
+    document.getElementById("oCode").value = oCode;
+    document.getElementById("pNumber").value = pNumber;
+    if (inputs[3].value === 'Mobile') {
+        document.getElementById("mobileType").checked = 'true';
+    } else {
+        document.getElementById("homeType").checked = 'true';
+    }
+    document.getElementById("phoneComment").value = inputs[2].value;
 }
 
 function editPhone(button) {
@@ -199,6 +227,18 @@ function checkBoxPhoneAction(checkBox) {
         //4
         selectedPhoneRows = deleteElementFromArray(selectedPhoneRows,
                 checkBox.parentElement.parentElement.parentElement);
+    }
+
+    if (selectedPhoneRows.length < 1) {
+        document.getElementById("phoneDelete").disabled = true;
+    } else {
+        document.getElementById("phoneDelete").disabled = false;
+    }
+
+    if (selectedPhoneRows.length === 1) {
+        document.getElementById("phoneEdit").disabled = false;
+    } else {
+        document.getElementById("phoneEdit").disabled = true;
     }
 }
 
@@ -241,7 +281,7 @@ function showAttachmentPopup(state) {
 
     document.getElementById('file').value = '';
     document.getElementById('attachmentComment').value = '';
-    
+
     document.getElementById("attachmentComment").style.borderColor = '';
 }
 
@@ -265,8 +305,8 @@ function saveAttachment() {
     } else {
         document.getElementById("attachmentComment").style.borderColor = '';
     }
-    
-    if(!isValidForm){
+
+    if (!isValidForm) {
         return;
     }
 
@@ -293,6 +333,7 @@ function saveAttachment() {
         inputComment.name = 'attachmentComment';
 
         tr = document.createElement("TR");
+        tr.className = 'tr-custom';
         td0 = document.createElement("TD");
         td0.hidden = 'true';
         td1 = document.createElement("TD");
@@ -460,8 +501,8 @@ function getPhoneType(isMobile) {
 function saveContact() {
     var isValidForm = true;
 
-    if (!validateWord(document.getElementById('fName').value
-            || document.getElementById('fName').value.length < 1)
+    if (!validateWord(document.getElementById('fName').value)
+            || document.getElementById('fName').value.length < 1
             || document.getElementById('fName').value.length > 20) {
         document.getElementById('fName').style.borderColor = 'red';
         isValidForm = false;
@@ -476,15 +517,16 @@ function saveContact() {
     } else {
         document.getElementById('lName').style.borderColor = '';
     }
-    if (!validateWord(document.getElementById('patronymic').value
-            || document.getElementById('patronymic').value.length > 20)) {
+    if ((document.getElementById('patronymic').value.length > 0
+            && !validateWord(document.getElementById('patronymic').value))
+            || document.getElementById('patronymic').value.length > 20) {
         document.getElementById('patronymic').style.borderColor = 'red';
         isValidForm = false;
     } else {
         document.getElementById('fName').style.borderColor = 'patronymic';
     }
     if ((document.getElementById('nation').value.length > 0
-        && !validateWord(document.getElementById('nation').value))
+            && !validateWord(document.getElementById('nation').value))
             || document.getElementById('nation').value.length > 45) {
         document.getElementById('nation').style.borderColor = 'red';
         isValidForm = false;
@@ -503,14 +545,15 @@ function saveContact() {
     } else {
         document.getElementById('job').style.borderColor = '';
     }
-    if (!validateEmail(document.getElementById('email').value)
+    if ((document.getElementById('email').value.length > 0
+            && !validateEmail(document.getElementById('email').value))
             || document.getElementById('email').value.length > 45) {
         document.getElementById('email').style.borderColor = 'red';
         isValidForm = false;
     } else {
         document.getElementById('email').style.borderColor = '';
     }
-    if ((document.getElementById('country').value.length > 1 
+    if ((document.getElementById('country').value.length > 1
             && !validateWord(document.getElementById('country').value))
             || document.getElementById('country').value.length > 20) {
         document.getElementById('country').style.borderColor = 'red';
@@ -541,7 +584,7 @@ function saveContact() {
         document.forms[0].submit();
     }
 }
- 
+
 function downloadFile(button) {
     var form = document.createElement('form');
     form.method = 'get';

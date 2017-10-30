@@ -22,6 +22,7 @@ public class ConnectionManager {
         dataSource.setUsername(bundle.getString("user"));
         dataSource.setPassword(bundle.getString("password"));
         dataSource.setMaxOpenPreparedStatements(Integer.parseInt(bundle.getString("max_pool")));
+        LOGGER.info("Max waitMIllis: " + dataSource.getMaxWaitMillis());
 
         try {
             Connection connection = dataSource.getConnection();

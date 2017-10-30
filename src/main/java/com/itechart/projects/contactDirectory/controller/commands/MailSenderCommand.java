@@ -1,5 +1,6 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
+import static com.itechart.projects.contactDirectory.controller.commands.CommandProcess.LOGGER;
 import com.itechart.projects.contactDirectory.model.entity.Contact;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.mail.GoogleMailService;
@@ -9,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.itechart.projects.contactDirectory.model.mail.MailService;
 import com.itechart.projects.contactDirectory.model.stringTemplates.MsgRender;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.ServletException;
 
 public class MailSenderCommand extends CommandProcess {
 
@@ -58,6 +61,11 @@ public class MailSenderCommand extends CommandProcess {
             processRequest(request, response);
         } catch (DAOException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 

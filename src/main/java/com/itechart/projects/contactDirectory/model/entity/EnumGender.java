@@ -1,6 +1,7 @@
 package com.itechart.projects.contactDirectory.model.entity;
 
 public enum EnumGender {
+    NONE("None"),
     MALE("Male"), 
     FEMALE("Female");
 

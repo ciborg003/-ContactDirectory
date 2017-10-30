@@ -45,6 +45,11 @@ public class GetMailPageCommand extends CommandProcess {
             request.getRequestDispatcher("mail.jsp").forward(request, response);
         } catch (ServletException | IOException | DAOException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 

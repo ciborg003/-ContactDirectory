@@ -2,6 +2,9 @@ package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.dropbox.core.DbxException;
 import static com.itechart.projects.contactDirectory.controller.commands.CommandProcess.LOGGER;
+import com.itechart.projects.contactDirectory.model.dao.NewAttachmentDAO;
+import com.itechart.projects.contactDirectory.model.dao.NewContactDAO;
+import com.itechart.projects.contactDirectory.model.dao.NewPhoneDAO;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
 import com.itechart.projects.contactDirectory.model.entity.Attachment;
@@ -11,13 +14,17 @@ import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +42,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 public class CreateContactCommand extends CommandProcess {
-
+    
     private static final String DBX_PROPERTY = "DropBox";
 
     private static ResourceBundle bundle = null;
@@ -55,6 +62,8 @@ public class CreateContactCommand extends CommandProcess {
     private String photoExtension = "";
 
     Map<String, String> map = new HashMap<>();
+    
+    private Savepoint savepoint;
 
     public CreateContactCommand() {
         bundle = ResourceBundle.getBundle(DBX_PROPERTY);
@@ -133,6 +142,14 @@ public class CreateContactCommand extends CommandProcess {
                     }
                 }
             }
+//            connection = ConnectionManager.getConnection();
+
+            connection.commit();
+            savepoint = connection.setSavepoint();
+//            contactDAO = new NewContactDAO();
+//            phoneDAO = new NewPhoneDAO(connection);
+//            attachmentDAO = new NewAttachmentDAO(connection);
+            
             contact.setId(contactDAO.create(contact));
             proccessPhoto();
             contactDAO.updatePhoto(contact);
@@ -155,41 +172,33 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 System.out.println(a);
                 a.setIdContact(contact.getId());
-                System.out.println("111111111111111111");
                 service.uploadFile(attachments.get(a), a.getUrl());
-                System.out.println("2222222222222222222222");
                 attachmentDAO.createAttachment(a);
-                System.out.println("3333333333333333333333333");
             }
 
             processRequest(request, response);
-        } catch (DAOException | IOException | FileUploadException e) {
+        } catch (DAOException | IOException | FileUploadException | SQLException e) {
             LOGGER.error(e.getMessage());
             try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (IOException ex) {
-                LOGGER.error(ex.getMessage());
+                connection.rollback(savepoint);
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException | SQLException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
             }
         }
     }
 
-    private void proccessPhoto() throws IOException {
-//        photoStream = item.getInputStream();
+    private void proccessPhoto() throws IOException, DAOException {
         if (photoAction != null
                 && photoAction.equals("change")
                 && photoStream != null
                 && photoStream.available() > 0) {
-            try {
-//                String ext = item.getName().substring(item.getName().lastIndexOf("."));
-                String photoName = contact.getId() + photoExtension;
-                String photoPath = bundle.getString("photo") + "/" + photoName;
-                service.uploadFile(photoStream, photoPath);
-                System.out.println("PhotoPath: " + photoPath);
-                contact.setPhotoUrl(photoPath);
-                contactDAO.updatePhoto(contact);
-            } catch (DAOException ex) {
-                LOGGER.error(ex.getMessage());
-            }
+            String photoName = contact.getId() + photoExtension;
+            String photoPath = bundle.getString("photo") + "/" + photoName;
+            service.uploadFile(photoStream, photoPath);
+            System.out.println("PhotoPath: " + photoPath);
+            contact.setPhotoUrl(photoPath);
+            contactDAO.updatePhoto(contact);
         }
     }
 
@@ -250,7 +259,8 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "gender":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && !value.toLowerCase().equals("none")) {
                     contact.setGender(EnumGender.valueOf(value));
                 }
                 break;
@@ -261,7 +271,8 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "familyState":
-                if (value != null && value.trim().length() > 0) {
+                if (value != null && value.trim().length() > 0
+                        && !value.toLowerCase().equals("none")) {
                     contact.setFamilyState(EnumFamilyState.valueOf(value));
                 }
                 break;

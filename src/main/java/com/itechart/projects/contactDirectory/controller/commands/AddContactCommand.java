@@ -21,6 +21,11 @@ public class AddContactCommand extends CommandProcess {
             request.getRequestDispatcher("editing.jsp").forward(request, response);
         } catch (ServletException | IOException ex) {
             LOGGER.error("ERROR in AddContact", ex);
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.itechart.projects.contactDirectory.model.entity;
 
 public enum EnumFamilyState {
+    NONE("None"),
     MARRIED("Married"),
     SINGLE("Single");
 

@@ -35,6 +35,11 @@ public class GetSearchPageCommand extends CommandProcess{
             request.getRequestDispatcher("search.jsp").forward(request, response);
         } catch (ServletException | IOException ex) {
             LOGGER.error(ex.getMessage());
+            try {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            } catch (ServletException | IOException ex1) {
+                LOGGER.error("Can't forward to error page", ex1);
+            }
         }
     }
     

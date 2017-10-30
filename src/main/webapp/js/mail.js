@@ -10,7 +10,7 @@ function addEmail() {
     div.className = "col-md-4";
     var li = document.createElement("li");
     li.className = "list-group-item";
-    li.innerHTML = '<p>' + email + ' </p><button type="button" class="btn btn-info button-add" onclick="deleteEmail(this)"><span class="fa fa-remove" />';
+    li.innerHTML = email + '<button style="margin-left: auto; margin-right: 0em;" type="button" class="btn btn-info " onclick="deleteEmail(this)"><span class="fa fa-remove" /></button>';
     li.innerHTML += '<input type="hidden" name="email" value="' + email + '" />';
     div.appendChild(li);
     emailList.appendChild(div);
