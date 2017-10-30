@@ -41,7 +41,7 @@ public class ServletController extends HttpServlet {
                     .newTrigger()
                     .withIdentity("dummyTriggerName", "group1")
                     .withSchedule(
-                            CronScheduleBuilder.cronSchedule("0 11 19 * * ?"))
+                            CronScheduleBuilder.cronSchedule("0 0 12 * * ?"))
                     .build();
             // Планируем задание с помощью JobDetail и Trigger
             scheduler.scheduleJob(job, trigger);
