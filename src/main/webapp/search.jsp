@@ -39,7 +39,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">From</span>
-                        <input type="date" name="birthdayFrom" class="form-control" placeholder="FirstName">
+                        <input type="date" name="birthday" class="form-control" placeholder="FirstName">
                         <span class="input-group-addon">To</span>
                         <input type="date" name="birthdayTo" class="form-control" placeholder="FirstName">
                     </div>
