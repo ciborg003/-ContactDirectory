@@ -17,7 +17,7 @@ import org.quartz.JobExecutionException;
 import org.stringtemplate.v4.ST;
 
 public class Birthday implements Job {
-    
+
     private static final Logger LOGGER = Logger.getRootLogger();
 
     @Override
@@ -28,8 +28,8 @@ public class Birthday implements Job {
             List<Contact> contacts = contactDAO.findContactThatHaveBirthdayToday();
             ST st = new ST(template.getMsg());
             for (Contact c : contacts) {
-//                st.addAggr("users.{name, surname}", c.getName(), c.getSurname());
-                st.add("user", c);
+                Object args[] = {c.getName(), c.getSurname()};
+                st.addAggr("users.{name, surname}", args);
             }
             Mail mail = new Mail();
             mail.setMessage(st.render());
