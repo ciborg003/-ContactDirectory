@@ -41,7 +41,7 @@ public class SearchCommand extends CommandProcess {
                 contactFrom = createContact(request, response);
                 
                 if ((request.getParameter("birthdayTo") != null) && !"".equals(request.getParameter("birthdayTo").trim())) {
-                    String[] date = request.getParameter("birthday").split("-");
+                    String[] date = request.getParameter("birthdayTo").split("-");
                     contactTo.setDob(new Date(Integer.parseInt(date[0]) - 1900,
                             Integer.parseInt(date[1]) - 1, Integer.parseInt(date[2])));
                 }
