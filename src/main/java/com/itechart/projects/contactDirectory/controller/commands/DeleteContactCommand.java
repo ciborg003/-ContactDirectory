@@ -1,6 +1,7 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.naming.NamingException;
@@ -28,6 +29,8 @@ public class DeleteContactCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 }

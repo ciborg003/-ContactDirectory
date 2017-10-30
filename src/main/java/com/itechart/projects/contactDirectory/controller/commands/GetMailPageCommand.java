@@ -2,6 +2,7 @@ package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.itechart.projects.contactDirectory.model.entity.Contact;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import com.itechart.projects.contactDirectory.model.stringTemplates.MsgTemplates;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -50,6 +51,8 @@ public class GetMailPageCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 

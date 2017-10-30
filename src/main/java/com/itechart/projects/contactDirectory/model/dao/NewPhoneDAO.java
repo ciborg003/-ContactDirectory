@@ -18,7 +18,7 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
 
     private Connection connection;
     private final String INSERT_PHONE = "insert into phone (countryCode, operatorCode, phonenumber, phoneType, idContact, comment) \n" +
-"        values (?, ?, ?, ?, ?, ?); select last_insert_id()";
+"        values (?, ?, ?, ?, ?, ?)";
     private final String FIND_PHONES = "select phone.idPhone, phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, phone.comment from phone\n" +
 "    where phone.idContact = ? and phone.deleted is null";
     private final String UPDATE_PHONE = "update phone set phone.countryCode = ?, phone.operatorCode = ?, phone.phoneNumber = ?,\n" +
@@ -29,7 +29,7 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
         List<Phone> list = new ArrayList<>();
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(FIND_PHONES);
@@ -54,8 +54,9 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return list;
@@ -64,7 +65,7 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
     public void updatePhone(Phone phone) throws DAOException {
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(UPDATE_PHONE);
@@ -79,21 +80,22 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
 
             statement.executeUpdate();
         } catch (SQLException ex) {
+            LOGGER.info("Query: " + statement);
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 
     public Integer createPhone(Phone phone) throws DAOException {
-        CallableStatement statement = null;
-
-        connection = ConnectionManager.getConnection();
+        PreparedStatement statement = null;
+//        connection = ConnectionManager.getConnection();
 
         try {
-            statement = connection.prepareCall(INSERT_PHONE);
+            statement = connection.prepareStatement(INSERT_PHONE, 
+                    PreparedStatement.RETURN_GENERATED_KEYS);
 
             statement.setString(1, phone.getCountryCode());
             statement.setString(2, phone.getOperatorCode());
@@ -102,16 +104,23 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
             statement.setInt(5, phone.getIdContact());
             statement.setString(6, phone.getComment());
 
-            ResultSet genKey = statement.executeQuery();
+            int rows = statement.executeUpdate();
+            if (rows == 0) {
+                throw new DAOException("Contact connot be inserted into DB");
+            }
+
+            ResultSet genKey = statement.getGeneratedKeys();
             if (genKey.next()) {
                 return genKey.getInt(1);
             }
+            
         } catch (SQLException ex) {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return null;
@@ -120,7 +129,7 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
     public void deletePhone(Phone phone) throws DAOException {
         CallableStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareCall(DELETE_PHONE);
@@ -132,8 +141,9 @@ public class NewPhoneDAO extends AbstractDAO<Integer, Phone> {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 

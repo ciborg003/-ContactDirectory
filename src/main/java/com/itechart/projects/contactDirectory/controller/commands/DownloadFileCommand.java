@@ -7,6 +7,7 @@ import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
 import com.itechart.projects.contactDirectory.model.entity.Attachment;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
@@ -36,7 +37,7 @@ public class DownloadFileCommand extends CommandProcess {
             int attachmentID = Integer.parseInt(request.getParameter("attachmentID"));
             Attachment attachment = null;
             
-            attachment = new AttachmentDAO().getAttachmentByID(attachmentID);
+            attachment = attachmentDAO.getAttachmentByID(attachmentID);
             ServletOutputStream out = response.getOutputStream();
         
             response.setContentType("application/download;");
@@ -54,6 +55,8 @@ public class DownloadFileCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
 
     }

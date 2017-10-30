@@ -94,6 +94,10 @@ function savePhone(button) {
         td3 = document.createElement("TD");
         td4 = document.createElement("TD");
         td5 = document.createElement("TD");
+        
+        td1.innerHTML = "<label class='custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0'>"
+            + "<input type='checkbox' class='custom-control-input' onchange='checkBoxPhoneAction(this)'>"
+            + "<span class='custom-control-indicator'></span></label>";
 
         inputAction.type = "hidden";
         inputAction.name = "phoneAction";

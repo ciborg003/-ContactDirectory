@@ -4,6 +4,7 @@ import com.dropbox.core.DbxException;
 import static com.itechart.projects.contactDirectory.controller.commands.CommandProcess.LOGGER;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -49,6 +50,8 @@ public class GetPhotoCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 

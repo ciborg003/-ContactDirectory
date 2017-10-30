@@ -2,6 +2,7 @@ package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.itechart.projects.contactDirectory.model.entity.Contact;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,6 +31,8 @@ public class ChangePageCommand extends CommandProcess {
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (DAOException | ServletException | IOException ex) {
             LOGGER.info(ex.getMessage());
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 }

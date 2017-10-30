@@ -8,6 +8,7 @@ import com.itechart.projects.contactDirectory.model.entity.EnumFamilyState;
 import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
@@ -45,6 +46,8 @@ public class UpdateContactCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 }

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.itechart.projects.contactDirectory.model.mail.MailService;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import com.itechart.projects.contactDirectory.model.stringTemplates.MsgRender;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +67,8 @@ public class MailSenderCommand extends CommandProcess {
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 

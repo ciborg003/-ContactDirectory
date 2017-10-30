@@ -331,7 +331,7 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             if (genKey.next()) {
                 return genKey.getInt(1);
             }
-            connection.commit();
+            
         } catch (SQLException e) {
             LOGGER.error("Can't insert contact:\nConnection: " + connection
                     + "\nStatement: " + statement, e);

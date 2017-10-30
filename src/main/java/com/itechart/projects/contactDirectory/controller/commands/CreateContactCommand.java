@@ -2,9 +2,6 @@ package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.dropbox.core.DbxException;
 import static com.itechart.projects.contactDirectory.controller.commands.CommandProcess.LOGGER;
-import com.itechart.projects.contactDirectory.model.dao.NewAttachmentDAO;
-import com.itechart.projects.contactDirectory.model.dao.NewContactDAO;
-import com.itechart.projects.contactDirectory.model.dao.NewPhoneDAO;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxService;
 import com.itechart.projects.contactDirectory.model.dropbox.DbxUser;
 import com.itechart.projects.contactDirectory.model.entity.Attachment;
@@ -21,7 +18,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Savepoint;
@@ -31,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -175,6 +169,8 @@ public class CreateContactCommand extends CommandProcess {
                 service.uploadFile(attachments.get(a), a.getUrl());
                 attachmentDAO.createAttachment(a);
             }
+            
+            connection.commit();
 
             processRequest(request, response);
         } catch (DAOException | IOException | FileUploadException | SQLException e) {
@@ -185,6 +181,8 @@ public class CreateContactCommand extends CommandProcess {
             } catch (ServletException | IOException | SQLException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 
@@ -259,8 +257,7 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "gender":
-                if (value != null && value.trim().length() > 0
-                        && !value.toLowerCase().equals("none")) {
+                if (value != null && value.trim().length() > 0) {
                     contact.setGender(EnumGender.valueOf(value));
                 }
                 break;
@@ -271,8 +268,7 @@ public class CreateContactCommand extends CommandProcess {
                 }
                 break;
             case "familyState":
-                if (value != null && value.trim().length() > 0
-                        && !value.toLowerCase().equals("none")) {
+                if (value != null && value.trim().length() > 0) {
                     contact.setFamilyState(EnumFamilyState.valueOf(value));
                 }
                 break;

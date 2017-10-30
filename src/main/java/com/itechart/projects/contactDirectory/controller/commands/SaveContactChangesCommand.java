@@ -10,6 +10,7 @@ import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.entity.EnumPhoneType;
 import com.itechart.projects.contactDirectory.model.entity.Phone;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +52,7 @@ public class SaveContactChangesCommand extends CommandProcess {
     private String phoneAction = "";
     private List<String> fileNames = new ArrayList<>();
     Map<String, String> map = new HashMap<>();
-    
+
     private Savepoint savepoint;
 
     public SaveContactChangesCommand() {
@@ -90,6 +91,9 @@ public class SaveContactChangesCommand extends CommandProcess {
 
         upload.setHeaderEncoding("UTF-8");
         try {
+            connection.commit();
+            savepoint = connection.setSavepoint();
+
             List items = upload.parseRequest(request);
             Iterator iter = items.iterator();
 
@@ -111,22 +115,24 @@ public class SaveContactChangesCommand extends CommandProcess {
                     }
                 }
             }
-            connection.commit();
-            savepoint = connection.setSavepoint();
+
             contactDAO.update(contact);
             proccessPhones();
+            connection.commit();
 
             processRequest(request, response);
         } catch (DAOException | IOException | FileUploadException | SQLException e) {
             LOGGER.error(e.getMessage());
             try {
-                if (connection != null){
+                if (connection != null) {
                     connection.rollback(savepoint);
                 }
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             } catch (ServletException | IOException | SQLException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
 
@@ -296,8 +302,8 @@ public class SaveContactChangesCommand extends CommandProcess {
                 try {
                     phone.setId(Integer.parseInt(value));
                 } catch (NumberFormatException e) {
-                    LOGGER.error("Try parse " + value + " to int:\n" + 
-                            e.getMessage());
+                    LOGGER.error("Try parse " + value + " to int:\n"
+                            + e.getMessage());
                 }
                 phones.put(phone, phoneAction);
                 phone = null;

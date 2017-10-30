@@ -18,9 +18,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
     private Connection connection;
     private final String CREATE_ATTACHMENT
             = "insert into attachment (loadDate, path, fileName, idContact, comment) \n" +
-"	values (?, ?, ?, ?, ?); select last_insert_id();";
-    private final String FIND_ATTACHMENTS = "select attachment.path, attachment.fileName, attachment.loadDate, attachment.idContact, attachment.comment from attachment\n" +
-"    where attachment.idAttachment = ?;";
+"	values (?, ?, ?, ?, ?)";
+    private final String FIND_ATTACHMENTS = "SELECT attachment.idAttachment, attachment.loadDate, attachment.path, attachment.fileName, attachment.comment from attachment\n" +
+"    where attachment.idContact = ?;";
     private final String UPDATE_ATTACHMENT = "update attachment set attachment.loadDate = ?, attachment.path = ?, attachment.fileName = ?, \n" +
 "    attachment.idContact = ?, attachment.comment = ? where attachment.idAttachment = ?;";
     private final String FIND_ATTACHMENT_BY_ID = "select attachment.path, attachment.fileName, attachment.loadDate, attachment.idContact, attachment.comment from attachment\n" +
@@ -30,10 +30,10 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
     public Integer createAttachment(Attachment attachment) throws DAOException {
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
-            statement = connection.prepareStatement(CREATE_ATTACHMENT);
+            statement = connection.prepareStatement(CREATE_ATTACHMENT, PreparedStatement.RETURN_GENERATED_KEYS);
 
             statement.setTimestamp(1, attachment.getLoadDate());
             statement.setString(2, attachment.getUrl());
@@ -41,7 +41,12 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             statement.setInt(4, attachment.getIdContact());
             statement.setString(5, attachment.getComment());
 
-            ResultSet genKey = statement.executeQuery();
+            int rows = statement.executeUpdate();
+            if (rows == 0){
+                throw new DAOException("Can't insert phone into DB");
+            }
+            
+            ResultSet genKey = statement.getGeneratedKeys();
             if (genKey.next()) {
                 return genKey.getInt(1);
             }
@@ -49,8 +54,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             LOGGER.error(ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return null;
@@ -60,7 +66,7 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
         List<Attachment> list = new ArrayList<>();
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(FIND_ATTACHMENTS);
@@ -83,8 +89,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             LOGGER.error(ex);
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return list;
@@ -93,7 +100,7 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
     public void updateAttachment(Attachment attachment) throws DAOException {
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(UPDATE_ATTACHMENT);
@@ -110,8 +117,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 
@@ -119,7 +127,7 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
         PreparedStatement statement = null;
         Attachment attachment = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(FIND_ATTACHMENT_BY_ID);
@@ -140,8 +148,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
 
         return attachment;
@@ -150,7 +159,7 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
     public void deleteAttachment(Attachment attachment) throws DAOException {
         PreparedStatement statement = null;
 
-        connection = ConnectionManager.getConnection();
+//        connection = ConnectionManager.getConnection();
 
         try {
             statement = connection.prepareStatement(DELETE_ATTACHMENT);
@@ -161,8 +170,9 @@ public class NewAttachmentDAO extends AbstractDAO<Integer, Attachment> {
             LOGGER.error(ex.getMessage());
             throw new DAOException(ex);
         } finally {
+            LOGGER.info("Query: " + statement);
             closeStatement(statement);
-            ConnectionManager.closeConnection(connection);
+//            ConnectionManager.closeConnection(connection);
         }
     }
 

@@ -2,6 +2,7 @@ package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.itechart.projects.contactDirectory.model.entity.EnumFamilyState;
 import com.itechart.projects.contactDirectory.model.entity.EnumGender;
+import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class GetSearchPageCommand extends CommandProcess{
             } catch (ServletException | IOException ex1) {
                 LOGGER.error("Can't forward to error page", ex1);
             }
+        } finally {
+            ConnectionManager.closeConnection(connection);
         }
     }
     
