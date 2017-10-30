@@ -25,13 +25,17 @@ function sendMail() {
     var emails = document.getElementsByName('email');
 
     if (document.getElementsByName('title')[0].value.trim().length < 1) {
-        alert("Title is empty");
+        document.getElementsByName('title')[0].style.backgroundColor = 'red';
         return;
-    } else
+    } else{
+        document.getElementsByName('title')[0].style.backgroundColor = 'red';
+    }
     if (document.getElementsByName('mailContent')[0].value.trim().length < 1) {
-        alert("Message is empty");
+        document.getElementsByName('mailContent')[0].style.backgroundColor = 'red';
         return;
-    } else
+    } else {
+        document.getElementsByName('mailContent')[0].style.backgroundColor = '';
+    }
     if (emails.length < 1) {
         alert("Email list is empty");
         return;
