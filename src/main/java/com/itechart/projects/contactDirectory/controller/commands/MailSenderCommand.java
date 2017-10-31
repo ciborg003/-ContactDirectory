@@ -43,7 +43,7 @@ public class MailSenderCommand extends CommandProcess {
                     Mail mail = new Mail();
                     mail.setContact(contact);
                     mail.setMessage(render.getMsgByTemplate(contact, content));
-
+                    mail.setTitle(title);
                     mailService.sendMail(mail);
                 }
             } else {
