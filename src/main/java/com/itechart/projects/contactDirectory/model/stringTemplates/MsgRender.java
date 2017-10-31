@@ -11,7 +11,8 @@ public class MsgRender {
         ST strTemplate = new ST(message);
 
         for (Contact contact : contacts) {
-            strTemplate.add("user", contact);
+            Object args[] = {contact.getName(), contact.getSurname()};
+            strTemplate.addAggr("users.{name, surname}", args);
         }
 
         return strTemplate.render();
@@ -21,7 +22,8 @@ public class MsgRender {
 
         ST strTemplate = new ST(message);
 
-        strTemplate.add("user", contact);
+        Object args[] = {contact.getName(), contact.getSurname()};
+        strTemplate.addAggr("users.{name, surname}", args);
 
         return strTemplate.render();
     }
