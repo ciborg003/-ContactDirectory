@@ -7,6 +7,7 @@ import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,16 @@ public class SearchCommand extends CommandProcess {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         try {
+            LOGGER.debug("Searching...");
+            LOGGER.debug("Parameters in request:");
+            
+            Enumeration<String> en = request.getParameterNames();
+            while(en.hasMoreElements()){
+                String name = en.nextElement();
+                String value = request.getParameter(name);
+                LOGGER.debug(value + ": " + name);
+            }
+            
             Contact arr[] = arr = new Contact[2];
             Contact contactFrom = null;
             Contact contactTo = new Contact();
@@ -38,6 +49,7 @@ public class SearchCommand extends CommandProcess {
                 pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
                 recordsOnPage = Integer.parseInt(request.getParameter("recordsOnPage"));
             } else {
+                LOGGER.debug("CreatingContact...");
                 contactFrom = createContact(request, response);
                 
                 if ((request.getParameter("birthdayTo") != null) && !"".equals(request.getParameter("birthdayTo").trim())) {
