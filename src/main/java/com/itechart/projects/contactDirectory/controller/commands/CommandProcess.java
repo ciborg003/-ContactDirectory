@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import java.util.regex.Pattern;
 
-
 public abstract class CommandProcess {
 
     protected Connection connection;
@@ -32,7 +31,7 @@ public abstract class CommandProcess {
     protected NewPhoneDAO phoneDAO;
     protected NewAttachmentDAO attachmentDAO;
     protected final static Logger LOGGER = Logger.getRootLogger();
-    
+
     private static final String patternWord = "^[A-Za-z]+'?[A-Za-z]+$|^[А-Яа-я]+$";
     private static final String patternPhone = "^\\+?[0-9]{2,3}-[0-9]{2}-[0-9]{7}$";
 
@@ -54,13 +53,13 @@ public abstract class CommandProcess {
         }
         if (request.getParameter("fName") != null
                 && request.getParameter("fName").trim().length() > 0) {
-            contact.setName( request.getParameter("fName"));
+            contact.setName(request.getParameter("fName"));
         }
         if (request.getParameter("lName") != null
                 && request.getParameter("lName").trim().length() != 0) {
             contact.setSurname(request.getParameter("lName"));
         }
-        if (request.getAttribute("patronymic") != null
+        if (request.getParameter("patronymic") != null
                 && request.getParameter("patronymic").trim().length() != 0) {
             contact.setPatronymic(request.getParameter("patronymic"));
         }
@@ -70,44 +69,51 @@ public abstract class CommandProcess {
             contact.setDob(new Date(Integer.parseInt(date[0]) - 1900,
                     Integer.parseInt(date[1]) - 1, Integer.parseInt(date[2])));
         }
-        if (request.getAttribute("gender") != null
+        if (request.getParameter("gender") != null
                 && request.getParameter("gender").trim().length() != 0) {
-            contact.setGender(EnumGender.valueOf(request.getParameter("gender")));
+            try {
+                contact.setGender(EnumGender.valueOf(request.getParameter("gender")));
+            } catch (Exception e){
+            }
         }
-        if (request.getAttribute("nation") != null
+        if (request.getParameter("nation") != null
                 && request.getParameter("nation").trim().length() != 0) {
             contact.setNationality(request.getParameter("nation"));
         }
-        if (request.getAttribute("familyState") != null
+        if (request.getParameter("familyState") != null
                 && request.getParameter("familyState").trim().length() != 0) {
+            try {
             contact.setFamilyState(EnumFamilyState.valueOf(request.getParameter("familyState")));
+            } catch (Exception e){
+                
+            }
         }
-        if ((request.getAttribute("webSite") != null)
+        if ((request.getParameter("webSite") != null)
                 && request.getParameter("webSite").trim().length() != 0) {
             contact.setWebSite(request.getParameter("webSite"));
         }
-        if ((request.getAttribute("email") != null)
+        if ((request.getParameter("email") != null)
                 && request.getParameter("email").trim().length() != 0) {
             contact.setEmail(request.getParameter("email"));
         }
-        if ((request.getAttribute("job") != null)
+        if ((request.getParameter("job") != null)
                 && request.getParameter("job").trim().length() != 0) {
             contact.setJob(request.getParameter("job"));
         }
-        if (request.getAttribute("country") != null
+        if (request.getParameter("country") != null
                 && request.getParameter("country").trim().length() != 0) {
             contact.setCountry(request.getParameter("country"));
         }
-        if (request.getAttribute("city") != null
-                && ((String) request.getAttribute("city")).trim().length() != 0) {
+        if (request.getParameter("city") != null
+                && ((String) request.getParameter("city")).trim().length() != 0) {
             contact.setCity(request.getParameter("city"));
         }
-        if (request.getAttribute("streetHouseRoom") != null
-                && ((String) request.getAttribute("streetHouseRoom")).trim().length() != 0) {
+        if (request.getParameter("streetHouseRoom") != null
+                && ((String) request.getParameter("streetHouseRoom")).trim().length() != 0) {
             contact.setStreetHouseRoom(request.getParameter("streetHouseRoom"));
         }
-        if (request.getAttribute("index") != null
-                && ((String) request.getAttribute("index")).trim().length() != 0) {
+        if (request.getParameter("index") != null
+                && ((String) request.getParameter("index")).trim().length() != 0) {
             contact.setIndexNumber(request.getParameter("index"));
         }
 
@@ -201,17 +207,17 @@ public abstract class CommandProcess {
 
     }
 
-    protected boolean validateWord(String word){
+    protected boolean validateWord(String word) {
         Pattern p = Pattern.compile(patternWord);
         Matcher matcher = p.matcher(word);
-        
+
         return matcher.find();
     }
-    
-    protected boolean validatePhone(String phone){
+
+    protected boolean validatePhone(String phone) {
         Pattern p = Pattern.compile(patternPhone);
         Matcher matcher = p.matcher(phone);
-        
+
         return matcher.find();
     }
 }
