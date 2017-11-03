@@ -10,7 +10,7 @@
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Send Mail</h1>
         <div class="main-container">
-            <form method="GET" action="ServletController">
+            <form method="POST" action="ServletController">
                 <input type="hidden" name="action" value="sendEmail">
                 <div class="container">
                     <div class="row ">
