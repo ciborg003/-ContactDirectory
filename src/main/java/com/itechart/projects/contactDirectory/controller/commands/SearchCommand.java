@@ -1,21 +1,16 @@
 package com.itechart.projects.contactDirectory.controller.commands;
 
 import com.itechart.projects.contactDirectory.model.entity.Contact;
-import com.itechart.projects.contactDirectory.model.entity.EnumGender;
 import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Enumeration;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
