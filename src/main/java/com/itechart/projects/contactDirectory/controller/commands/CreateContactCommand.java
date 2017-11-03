@@ -172,7 +172,9 @@ public class CreateContactCommand extends CommandProcess {
             
             connection.commit();
 
-            processRequest(request, response);
+            
+            response.sendRedirect("/ServletController/m");
+//            processRequest(request, response);
         } catch (DAOException | IOException | FileUploadException | SQLException e) {
             LOGGER.error(e.getMessage());
             try {
