@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -65,6 +65,8 @@
             <div id="popupAttachment">
                 <h4>Editing Attachment</h4>
                 <div class="container">
+                    <div id="btn-container">
+                    </div>
                     <div id="select-file" class="form-group">
                         <label for="file">Select file:</label>
                         <input type="file" id="file" name="data" class="form-control-file">
@@ -84,7 +86,7 @@
             </div>
             <jsp:include page="popup-submit.jsp"></jsp:include>
         </div>
-
+<!------------------------------FORM---------------------------------->
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Editing Contact</h1> 
         <form id="form" action="ServletController?action=${action}" method="POST" enctype="multipart/form-data">
@@ -137,7 +139,7 @@
                         <br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Nationality: </span>
+                        <span class="input-group-addon">Nationality</span>
                         <input name="nation" id ="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
                     </div>
                 </div>
@@ -145,7 +147,7 @@
             <div class="container-fluid main-container-edd-info">
                 <div class="container-edd-info">
                     <div class="input-group">
-                        <span class="input-group-addon">Family state: </span>
+                        <span class="input-group-addon">Family state</span>
 
                         <select class="form-control" name="familyState">
                             <c:forEach items="${familyStates}" var="familyState">
@@ -161,15 +163,15 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Web Site: </span>
+                        <span class="input-group-addon">Web Site</span>
                         <input name="webSite" id="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Email: </span>
+                        <span class="input-group-addon">Email</span>
                         <input name="email" id="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Current Work: </span>
+                        <span class="input-group-addon">Current Work</span>
                         <input name="job" id="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
                     </div>
                 </div>
@@ -177,19 +179,19 @@
 
 
                     <div class="input-group">
-                        <span class="input-group-addon">Country: </span>
+                        <span class="input-group-addon">Country</span>
                         <input name="country" id="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">City: </span>
+                        <span class="input-group-addon">City</span>
                         <input name="city" id="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Street, House, Room:</span>
+                        <span class="input-group-addon">Street, House, Room</span>
                         <input name="streetHouseRoom" id="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">Index: </span>
+                        <span class="input-group-addon">Index</span>
                         <input name="index" id="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
                     </div>
                 </div>
@@ -205,7 +207,7 @@
                 <div id="phoneActions">
                     <div class="btn-group">
                         <button type="button" class=" btn btn-info btn-md" onclick="createPhone()">Add</button>
-                        <button id ="phoneDelete" type="button" class="btn btn-info btn-md" onclick="deletePhones()">Delete</button>
+                        <button id ="phoneDelete" type="button" class="btn btn-info btn-md" onclick="deletePhones()" disabled="">Delete</button>
                         <button id ="phoneEdit" type="button" class="btn btn-info btn-md" onclick="editPhoneOnCheckbox()" disabled="">Edit</button>
                     </div>
 
