@@ -313,13 +313,13 @@ public class NewContactDAO extends AbstractDAO<Integer, Contact> {
             statement.setString(5, entity.getGender().getDescription());
             statement.setString(6, entity.getNationality());
             statement.setString(7, entity.getFamilyState().getDescription());
-            statement.setString(8, entity.getJob());
-            statement.setString(9, entity.getCountry());
-            statement.setString(10, entity.getCity());
-            statement.setString(11, entity.getStreetHouseRoom());
-            statement.setString(12, entity.getIndexNumber());
-            statement.setString(13, entity.getEmail());
-            statement.setString(14, entity.getWebSite());
+            statement.setString(8, entity.getWebSite());
+            statement.setString(9, entity.getJob());
+            statement.setString(10, entity.getCountry());
+            statement.setString(11, entity.getCity());
+            statement.setString(12, entity.getStreetHouseRoom());
+            statement.setString(13, entity.getIndexNumber());
+            statement.setString(14, entity.getEmail());
             statement.setString(15, entity.getPhotoUrl());
 
             int rows = statement.executeUpdate();
