@@ -14,11 +14,6 @@
                 <input type="hidden" name="action" value="sendEmail">
                 <div class="container">
                     <div class="row ">
-                        <!--
-                                            <div class="col-md-1">
-                                                <label>Add email:</label>
-                                            </div>
-                        -->
                         <div class="col-md-12">
                             <div class="input-group">
                                 <span class="span-input_group-email input-group-addon">

@@ -1,7 +1,7 @@
 var contact = {};
 contact.selectedContacts = [];
 
-function loadPage(recordsCount, pageNumber, recordsOnPage) {
+function  loadPage(recordsCount, pageNumber, recordsOnPage) {
     var selectRecordsOnPage = document.getElementById("recordsOnPage");
 
     for (var i = 0; i < selectRecordsOnPage.length; i++) {

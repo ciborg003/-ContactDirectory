@@ -6,20 +6,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html">
         <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/navbar.css" />
-        <link rel="stylesheet" type="text/css" href="css/popup.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="css/editing.css">
-        <link rel="stylesheet" type="text/css" href="css/button-style.css">
-        <link rel="stylesheet" type="text/css" href="css/table-style.css">
         <title>User Page</title>
     </head>
 
     <body>
         <div id="wrap">
             <input type="hidden" id="popUpAction" value="none">
-<!--|||||||||||||||||||||||PopUp PHONE||||||||||||||||||||||||||||||||-->
+<!----------------------------------PopUp PHONE---------------------------------->
             <div id="popupPhone">
                 <div class="container-fluid">
                     <h4>Editing Phone Number</h4>
@@ -61,7 +54,7 @@
                     </div>
                 </div>
             </div>
-<!--|||||||||||||||||||||||PopUp ATTACHMENT||||||||||||||||||||||||||||||||-->
+<!-------------------------PopUp ATTACHMENT---------------------------------->
             <div id="popupAttachment">
                 <h4>Editing Attachment</h4>
                 <div class="container">
@@ -109,15 +102,26 @@
                         <span class="input-group-addon">FirstName</span>
                         <input name="fName" id="fName" type="text" class="form-control" placeholder="FirstName" value="${contact.name}">
                     </div>
+                    <div class="alert alert-danger" id="FN-Alert" onclick="this.style.display='none'" hidden="">
+                        <strong>First Name</strong> contains Cyrillic and Latin. Length from 1 to 20
+                    </div>
 
                     <div class="input-group">
                         <span class="input-group-addon">LastName</span>
                         <input name="lName" id="lName"  type="text" class="form-control" placeholder="LastName" value="${contact.surname}">
                     </div>
+                    <div class="alert alert-danger" id="LN-Alert" hidden="">
+                        <strong>Last Name</strong> contains Cyrillic and Latin. Length from 1 to 20
+                    </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">Patronymic</span>
                         <input name="patronymic" id="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
                     </div>
+                    <div class="alert alert-danger" id="MN-Alert" hidden="">
+                        <strong>Patronymic</strong> contains Cyrillic and Latin. Length from 0 to 20
+                    </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">Birthday</span>
                         <input name="birthday" type="date" class="form-control" value="${contact.dob}" max="${maxDate}">
@@ -141,6 +145,9 @@
                     <div class="input-group">
                         <span class="input-group-addon">Nationality</span>
                         <input name="nation" id ="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
+                    </div>
+                    <div class="alert alert-danger" id="Nation-Alert" hidden="">
+                        <strong>Nationality</strong> contains Cyrillic and Latin. Length from 0 to 45
                     </div>
                 </div>
             </div>
@@ -166,13 +173,24 @@
                         <span class="input-group-addon">Web Site</span>
                         <input name="webSite" id="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
                     </div>
+                    <div class="alert alert-danger" id="WSite-Alert" hidden="">
+                        <strong>Web site</strong> Length from 0 to 100
+                    </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">Email</span>
                         <input name="email" id="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
                     </div>
+                    <div class="alert alert-danger" id="Email-Alert" hidden="">
+                        <strong>Email</strong> example: someEmail@gmail.com Length from 0 to 45
+                    </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">Current Work</span>
                         <input name="job" id="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
+                    </div>
+                    <div class="alert alert-danger" id="Job-Alert" hidden="">
+                        <strong>Current Work</strong> Length from 0 to 45
                     </div>
                 </div>
                 <div class="container-edd-info">
@@ -181,19 +199,34 @@
                     <div class="input-group">
                         <span class="input-group-addon">Country</span>
                         <input name="country" id="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
+                    </div><div class="alert alert-danger" id="Country-Alert" hidden="">
+                        <strong>Country</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">City</span>
                         <input name="city" id="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
                     </div>
+                    <div class="alert alert-danger" id="City-Alert" hidden="">
+                        <strong>City</strong> contains Cyrillic and Latin. Length from 0 to 20
+                    </div>
+                    
                     <div class="input-group">
-                        <span class="input-group-addon">Street, House, Room</span>
+                        <span class="input-group-addon">Street House Room</span>
                         <input name="streetHouseRoom" id="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
                     </div>
+                    <div class="alert alert-danger" id="SHR-Alert" hidden="">
+                        <strong>Street</strong> Length from 0 to 45
+                    </div>
+                    
                     <div class="input-group">
                         <span class="input-group-addon">Index</span>
                         <input name="index" id="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
                     </div>
+                    <div class="alert alert-danger" id="Index-Alert" hidden="">
+                        <strong>Nationality</strong> Length from 0 to 45
+                    </div>
+                    
                 </div>
             </div>
             <div id="save">
@@ -202,7 +235,7 @@
                 </button>
             </div>
 
-<!--||||||||||||||||||||||||||||||||||PHONE TABLE|||||||||||||||||||||||||||||||||||||| -->
+<!------------------------------------PHONE TABLE----------------------------------------->
             <div id="editingPhones">
                 <div id="phoneActions">
                     <div class="btn-group">
@@ -261,7 +294,7 @@
                 </table>
             </div>
 
-<!--||||||||||||||||||||||||||||||||||ATTACHMENT TABLE|||||||||||||||||||||||||||||||||||||| -->
+<!------------------------------------ATTACHMENT TABLE----------------------------------------->
             <div id="editingAttachments">
                 <div id="attachmentActions">
                     <button type="button" class="btn btn-info btn-md" onclick="createAttachment()">
@@ -310,9 +343,14 @@
             </div>
 
         </form>
-
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="css/navbar.css" />
+        <link rel="stylesheet" type="text/css" href="css/popup.css">
+        <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/button-style.css">
+        <link rel="stylesheet" type="text/css" href="css/table-style.css">
+        <link rel="stylesheet" type="text/css" href="css/editing.css">
         <script type="text/javascript" src="js/validation.js"></script>
         <script type="text/javascript" src="js/editing.js"></script>
     </body>
-
 </html>
