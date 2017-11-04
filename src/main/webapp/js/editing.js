@@ -403,7 +403,7 @@ function saveAttachment() {
                 + '<button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>'
                 + "<button class='btn btn-info' onclick='deletePhone()'>Delete</button>"
                 + "</div>";
-    }
+    } 
     td0.innerHTML = "";
     td0.appendChild(file);
     file.removeAttribute('id');
@@ -433,11 +433,28 @@ function editAttachment(button) {
     document.getElementById("popUpAction").value = 'edit';
     document.getElementById('file').value = file;
     document.getElementById("attachmentComment").value = comment;
+    
+    document.getElementById('select-file').hidden = true;
+    
+    var btnFileName = document.createElement('button');
+    document.getElementById('btn-container').appendChild(btnFileName);
+    alert(document.getElementById('btn-container'));
+    btnFileName.type = 'button';
+    btnFileName.id = 'btnFileName';
+    btnFileName.onclick = closeBtnFileName;
 }
+
+function closeBtnFileName(btnFileName){
+    var parent = btnFileName.parentElement;
+    alert(parent);
+    parent.removeChild(btnFileName);
+    document.getElementById('select-file').hidden = false;
+};
 
 function createAttachment() {
     showAttachmentPopup('block');
     document.getElementById("popUpAction").value = 'create';
+    document.getElementById('file').hidden = false;
 }
 
 function deleteAttachment(btn) {
@@ -453,7 +470,7 @@ function deleteAttachment(btn) {
 
 
 //----------------------------------------------------------------
-function changePhoto() {
+function  changePhoto() {
     var pattern = /\.(gif|jpg|jpeg|tiff|png)$/i;
 
     var photoSelect = document.getElementById('selectPhoto');
@@ -509,6 +526,7 @@ function saveContact() {
             || document.getElementById('fName').value.length < 1
             || document.getElementById('fName').value.length > 20) {
         document.getElementById('fName').style.borderColor = 'red';
+        document.getElementById('FN-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('fName').style.borderColor = '';
@@ -517,6 +535,7 @@ function saveContact() {
             || document.getElementById('lName').value.length < 1
             || document.getElementById('lName').value.length > 20) {
         document.getElementById('lName').style.borderColor = 'red';
+        document.getElementById('LN-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('lName').style.borderColor = '';
@@ -525,26 +544,30 @@ function saveContact() {
             && !validateWord(document.getElementById('patronymic').value))
             || document.getElementById('patronymic').value.length > 20) {
         document.getElementById('patronymic').style.borderColor = 'red';
+        document.getElementById('MN-Alert').style.display = 'block';
         isValidForm = false;
     } else {
-        document.getElementById('fName').style.borderColor = 'patronymic';
+        document.getElementById('fName').style.borderColor = '';
     }
     if ((document.getElementById('nation').value.length > 0
             && !validateWord(document.getElementById('nation').value))
             || document.getElementById('nation').value.length > 45) {
         document.getElementById('nation').style.borderColor = 'red';
+        document.getElementById('Nation-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('nation').style.borderColor = '';
     }
     if (document.getElementById('webSite').value.length > 100) {
         document.getElementById('webSIte').style.borderColor = 'red';
+        document.getElementById('WSite-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('webSite').style.borderColor = '';
     }
     if (document.getElementById('job').value.length > 45) {
         document.getElementById('job').style.borderColor = 'red';
+        document.getElementById('Job-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('job').style.borderColor = '';
@@ -553,6 +576,7 @@ function saveContact() {
             && !validateEmail(document.getElementById('email').value))
             || document.getElementById('email').value.length > 45) {
         document.getElementById('email').style.borderColor = 'red';
+        document.getElementById('Email-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('email').style.borderColor = '';
@@ -561,24 +585,28 @@ function saveContact() {
             && !validateWord(document.getElementById('country').value))
             || document.getElementById('country').value.length > 20) {
         document.getElementById('country').style.borderColor = 'red';
+        document.getElementById('Country-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('country').style.borderColor = '';
     }
     if (document.getElementById('city').value.length > 20) {
         document.getElementById('city').style.borderColor = 'red';
+        document.getElementById('City-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('city').style.borderColor = '';
     }
     if (document.getElementById('streetHouseRoom').value.length > 45) {
         document.getElementById('streetHouseRoom').style.borderColor = 'red';
+        document.getElementById('SHR-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('streetHouseRoom').style.borderColor = '';
     }
     if (document.getElementById('index').value.length > 45) {
         document.getElementById('index').style.borderColor = 'red';
+        document.getElementById('Index-Alert').style.display = 'block';
         isValidForm = false;
     } else {
         document.getElementById('index').style.borderColor = '';
@@ -591,7 +619,7 @@ function saveContact() {
 
 function downloadFile(button) {
     var form = document.createElement('form');
-    form.method = 'get';
+    form.method = 'get'; 
     form.action = 'ServletController';
 
     var inputAction = document.createElement('input');
@@ -606,4 +634,8 @@ function downloadFile(button) {
     form.appendChild(inputAction);
     form.appendChild(attachmentID);
     form.submit();
+}
+
+function hideAlert(div) {
+    div.style.display = 'none';
 }
