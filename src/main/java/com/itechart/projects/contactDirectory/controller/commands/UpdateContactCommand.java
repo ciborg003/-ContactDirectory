@@ -11,6 +11,7 @@ import com.itechart.projects.contactDirectory.model.exceptions.DAOException;
 import com.itechart.projects.contactDirectory.model.pool.ConnectionManager;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,11 @@ public class UpdateContactCommand extends CommandProcess {
             List<Phone> phones = phoneDAO.findPhonesByContact(contact);
             request.setAttribute("phoneList", phones);
             List<Attachment> attachments = attachmentDAO.findAttachmentsByContact(contact);
-            request.setAttribute("attachmentList", attachments);
+            List<String> attachmentsInJSON = new ArrayList<>(attachments.size());
+            for(int i = 0; i < attachments.size(); i++){
+                attachmentsInJSON.add(i, jsonParser.writeValueAsString(attachments.get(i)));
+            }
+            request.setAttribute("attachmentList", attachmentsInJSON);
 
             request.setAttribute("contact", contact);
             request.setAttribute("genders", EnumGender.values());
