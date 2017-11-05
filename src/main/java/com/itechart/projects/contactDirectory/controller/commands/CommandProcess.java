@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import java.util.regex.Pattern;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public abstract class CommandProcess {
 
@@ -31,6 +32,7 @@ public abstract class CommandProcess {
     protected NewPhoneDAO phoneDAO;
     protected NewAttachmentDAO attachmentDAO;
     protected final static Logger LOGGER = Logger.getRootLogger();
+    protected ObjectMapper jsonParser = new ObjectMapper();
 
     private static final String patternWord = "^[A-Za-z]+'?[A-Za-z]+$|^[А-Яа-я]+$";
     private static final String patternPhone = "^\\+?[0-9]{2,3}-[0-9]{2}-[0-9]{7}$";
