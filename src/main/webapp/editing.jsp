@@ -73,7 +73,7 @@
                     <textarea class="form-control" id="attachmentComment" rows="5"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="button-red btn btn-primary" onclick="saveAttachment();">Save</button>
+                    <button type="button" class="button-red btn btn-primary" onclick="saveAttachment();">Save</button>
                     <button type="button" class="button-red btn" onclick="showAttachmentPopup('none');">Cancel</button>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                         <span class="input-group-addon">FirstName</span>
                         <input name="fName" id="fName" type="text" class="form-control" placeholder="FirstName" value="${contact.name}">
                     </div>
-                    <div class="alert alert-danger" id="FN-Alert" onclick="this.style.display='none'" hidden="">
+                    <div class="alert alert-danger" id="FN-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>First Name</strong> contains Cyrillic and Latin. Length from 1 to 20
                     </div>
 
@@ -110,7 +110,7 @@
                         <span class="input-group-addon">LastName</span>
                         <input name="lName" id="lName"  type="text" class="form-control" placeholder="LastName" value="${contact.surname}">
                     </div>
-                    <div class="alert alert-danger" id="LN-Alert" hidden="">
+                    <div class="alert alert-danger" id="LN-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Last Name</strong> contains Cyrillic and Latin. Length from 1 to 20
                     </div>
                     
@@ -118,7 +118,7 @@
                         <span class="input-group-addon">Patronymic</span>
                         <input name="patronymic" id="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
                     </div>
-                    <div class="alert alert-danger" id="MN-Alert" hidden="">
+                    <div class="alert alert-danger" id="MN-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Patronymic</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
                     
@@ -146,7 +146,7 @@
                         <span class="input-group-addon">Nationality</span>
                         <input name="nation" id ="nation" type="text" class="form-control" value="${contact.nationality}" placeholder="Nationality">
                     </div>
-                    <div class="alert alert-danger" id="Nation-Alert" hidden="">
+                    <div class="alert alert-danger" id="Nation-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Nationality</strong> contains Cyrillic and Latin. Length from 0 to 45
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                         <span class="input-group-addon">Web Site</span>
                         <input name="webSite" id="webSite" type="text" class="form-control" value="${contact.webSite}" placeholder="Web Site">
                     </div>
-                    <div class="alert alert-danger" id="WSite-Alert" hidden="">
+                    <div class="alert alert-danger" id="WSite-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Web site</strong> Length from 0 to 100
                     </div>
                     
@@ -181,7 +181,7 @@
                         <span class="input-group-addon">Email</span>
                         <input name="email" id="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
                     </div>
-                    <div class="alert alert-danger" id="Email-Alert" hidden="">
+                    <div class="alert alert-danger" id="Email-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Email</strong> example: someEmail@gmail.com Length from 0 to 45
                     </div>
                     
@@ -189,7 +189,7 @@
                         <span class="input-group-addon">Current Work</span>
                         <input name="job" id="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
                     </div>
-                    <div class="alert alert-danger" id="Job-Alert" hidden="">
+                    <div class="alert alert-danger" id="Job-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Current Work</strong> Length from 0 to 45
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                     <div class="input-group">
                         <span class="input-group-addon">Country</span>
                         <input name="country" id="country" type="text" class="form-control" value="${contact.country}" placeholder="Country">
-                    </div><div class="alert alert-danger" id="Country-Alert" hidden="">
+                    </div><div class="alert alert-danger" id="Country-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Country</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
                     
@@ -207,7 +207,7 @@
                         <span class="input-group-addon">City</span>
                         <input name="city" id="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
                     </div>
-                    <div class="alert alert-danger" id="City-Alert" hidden="">
+                    <div class="alert alert-danger" id="City-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>City</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
                     
@@ -215,7 +215,7 @@
                         <span class="input-group-addon">Street House Room</span>
                         <input name="streetHouseRoom" id="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
                     </div>
-                    <div class="alert alert-danger" id="SHR-Alert" hidden="">
+                    <div class="alert alert-danger" id="SHR-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Street</strong> Length from 0 to 45
                     </div>
                     
@@ -223,7 +223,7 @@
                         <span class="input-group-addon">Index</span>
                         <input name="index" id="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
                     </div>
-                    <div class="alert alert-danger" id="Index-Alert" hidden="">
+                    <div class="alert alert-danger" id="Index-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Nationality</strong> Length from 0 to 45
                     </div>
                     
@@ -314,10 +314,12 @@
                         <c:forEach items="${attachmentList}" var="attachment">
                             <tr class="tr-custom" id="${attachment.id}">
                         <input type="hidden" name="attachmentAction" value="none">
-                        <input type="hidden" name="loadDate" value="${attachment.loadDate}">
+<!--                        <input type="hidden" name="loadDate" value="${attachment.loadDate}">
                         <input type="hidden" name="attachmentComment" value="${attachment.comment}">
                         <input type="hidden" name="filePath" value="${attachment.url}">
-                        <input type="hidden" name="idAttachment" value="${attachment.id}">
+                        <input type="hidden" name="fileName" value="${attachment.fileName}">
+                        <input type="hidden" name="idAttachment" value="${attachment.id}">-->
+                        <input type="hidden" name="attachment" value="${attachment}">
                         <td hidden="">
                             <input type="file" name="fileStorage">
                         </td>
