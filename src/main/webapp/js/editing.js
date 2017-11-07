@@ -15,7 +15,7 @@ function deleteElementFromArray(arr, el) {
     //5
     return arr;
 }
-//--------------PHONE_ACTIONS------------------------------
+//--------------PHONE_ACTIONS--------------- ---------------
 
 function showPhonePopup(state) {
     document.getElementById("wrap").style.display = state;
@@ -287,6 +287,8 @@ function showAttachmentPopup(state) {
     document.getElementById('attachmentComment').value = '';
 
     document.getElementById("attachmentComment").style.borderColor = '';
+    document.getElementById('select-file').hidden = false;
+    document.getElementById('btn-container').innerHTML = '';
 }
 
 function saveAttachment() {
@@ -295,9 +297,10 @@ function saveAttachment() {
 
     var file = document.getElementById("file");
     var comment = document.getElementById("attachmentComment").value;
-    if (!file.value) {
+    if (!file.value && !document.getElementById('select-file').hidden) {
         document.getElementById("file").style.border = '1px solid red';
-        return;
+        isValidForm = false;
+//        return;
     }
 
     if (!comment) {
@@ -315,7 +318,7 @@ function saveAttachment() {
     }
 
     var tr;
-    var inputAction, inputLoadDate, inputComment;
+    var inputAction, inputLoadDate, inputComment, inputFileName;
     var td0, td1, td2, td3, td4;
 
 
@@ -335,6 +338,9 @@ function saveAttachment() {
         inputComment = document.createElement("INPUT");
         inputComment.type = 'hidden';
         inputComment.name = 'attachmentComment';
+        inputFileName = document.createElement('input');
+        inputFileName.type = 'hidden';
+        inputFileName.name = 'fileName';
 
         tr = document.createElement("TR");
         tr.className = 'tr-custom';
@@ -348,6 +354,8 @@ function saveAttachment() {
         tr.appendChild(inputAction);
         tr.appendChild(inputLoadDate);
         tr.appendChild(inputComment);
+        tr.appendChild(inputFileName);
+        
         tr.appendChild(td0);
         tr.appendChild(td1);
         tr.appendChild(td2);
@@ -360,6 +368,7 @@ function saveAttachment() {
 //        inputFile.value = file.value;
         inputLoadDate.value = now;
         inputComment.value = comment;
+        inputFileName.value = file.value.substring(file.value.lastIndexOf('\\')+1);
 
         td1.innerHTML = "<h6>" + file.value + "<\h6>";
         td2.innerHTML = "<h6>" + now + "</h6>";
@@ -374,16 +383,30 @@ function saveAttachment() {
         inputAction = tr.getElementsByTagName('INPUT')[0];
         inputLoadDate = tr.getElementsByTagName('INPUT')[1];
         inputComment = tr.getElementsByTagName('INPUT')[2];
+        inputFileName = tr.getElementsByTagName('INPUT')[3];
 
         if (inputAction.value !== 'create') {
             inputAction.value = 'edit';
         }
 
-        td0 = tr.getElementsByTagName('td')[0];
-        td1 = tr.getElementsByTagName('td')[1];
-        td2 = tr.getElementsByTagName('td')[2];
-        td3 = tr.getElementsByTagName('td')[3];
-        td4 = tr.getElementsByTagName('td')[4];
+        td0 = tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length-5];
+        td1 = tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length-4];
+        td2 = tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length-3];
+        td3 = tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length-2];
+        td4 = tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length-1];
+        
+        if (document.getElementById('btn-container')
+                .getElementsByTagName('span').length > 0){
+            tr.getElementsByTagName('td')[tr.getElementsByTagName('td').length - 2]
+                    .innerHTML = "<h6>" + comment + "</h6>"; 
+            inputComment.value = comment;
+            
+            document.getElementById('select-file').innerHTML = "<label for='file'>Select file:</label>"
+            + "<input type='file' id='file' name='data' class='form-control-file'>";
+    
+            showAttachmentPopup('none');
+            return;
+        }
 
         if (file.value.trim().length > 0) {
 //            inputFile.value = file;
@@ -395,7 +418,7 @@ function saveAttachment() {
 
 
         inputComment.value = comment;
-
+        inputFileName.value = file.value.substring(file.value.lastIndexOf('\\')+1);
 
 
         td3.innerHTML = "<h6>" + comment + "</h6>";
@@ -431,23 +454,24 @@ function editAttachment(button) {
     var comment = inputs[2].value;
 
     document.getElementById("popUpAction").value = 'edit';
-    document.getElementById('file').value = file;
+//    document.getElementById('file').value = file;
     document.getElementById("attachmentComment").value = comment;
     
     document.getElementById('select-file').hidden = true;
     
-    var btnFileName = document.createElement('button');
+    var btnFileName = document.createElement('span');
+    document.getElementById('btn-container').innerHTML = attachmentRaw
+            .getElementsByTagName('input')[3].value + " ";
     document.getElementById('btn-container').appendChild(btnFileName);
-    alert(document.getElementById('btn-container'));
-    btnFileName.type = 'button';
+    btnFileName.className = 'fa fa-remove'
     btnFileName.id = 'btnFileName';
     btnFileName.onclick = closeBtnFileName;
+    
 }
 
-function closeBtnFileName(btnFileName){
-    var parent = btnFileName.parentElement;
-    alert(parent);
-    parent.removeChild(btnFileName);
+function closeBtnFileName(){
+    document.getElementById('btn-container').innerHTML = '';
+    
     document.getElementById('select-file').hidden = false;
 };
 
@@ -526,7 +550,7 @@ function saveContact() {
             || document.getElementById('fName').value.length < 1
             || document.getElementById('fName').value.length > 20) {
         document.getElementById('fName').style.borderColor = 'red';
-        document.getElementById('FN-Alert').style.display = 'block';
+        document.getElementById('FN-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('fName').style.borderColor = '';
@@ -535,7 +559,7 @@ function saveContact() {
             || document.getElementById('lName').value.length < 1
             || document.getElementById('lName').value.length > 20) {
         document.getElementById('lName').style.borderColor = 'red';
-        document.getElementById('LN-Alert').style.display = 'block';
+        document.getElementById('LN-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('lName').style.borderColor = '';
@@ -544,7 +568,7 @@ function saveContact() {
             && !validateWord(document.getElementById('patronymic').value))
             || document.getElementById('patronymic').value.length > 20) {
         document.getElementById('patronymic').style.borderColor = 'red';
-        document.getElementById('MN-Alert').style.display = 'block';
+        document.getElementById('MN-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('fName').style.borderColor = '';
@@ -553,21 +577,21 @@ function saveContact() {
             && !validateWord(document.getElementById('nation').value))
             || document.getElementById('nation').value.length > 45) {
         document.getElementById('nation').style.borderColor = 'red';
-        document.getElementById('Nation-Alert').style.display = 'block';
+        document.getElementById('Nation-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('nation').style.borderColor = '';
     }
     if (document.getElementById('webSite').value.length > 100) {
         document.getElementById('webSIte').style.borderColor = 'red';
-        document.getElementById('WSite-Alert').style.display = 'block';
+        document.getElementById('WSite-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('webSite').style.borderColor = '';
     }
     if (document.getElementById('job').value.length > 45) {
         document.getElementById('job').style.borderColor = 'red';
-        document.getElementById('Job-Alert').style.display = 'block';
+        document.getElementById('Job-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('job').style.borderColor = '';
@@ -576,7 +600,7 @@ function saveContact() {
             && !validateEmail(document.getElementById('email').value))
             || document.getElementById('email').value.length > 45) {
         document.getElementById('email').style.borderColor = 'red';
-        document.getElementById('Email-Alert').style.display = 'block';
+        document.getElementById('Email-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('email').style.borderColor = '';
@@ -585,28 +609,28 @@ function saveContact() {
             && !validateWord(document.getElementById('country').value))
             || document.getElementById('country').value.length > 20) {
         document.getElementById('country').style.borderColor = 'red';
-        document.getElementById('Country-Alert').style.display = 'block';
+        document.getElementById('Country-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('country').style.borderColor = '';
     }
     if (document.getElementById('city').value.length > 20) {
         document.getElementById('city').style.borderColor = 'red';
-        document.getElementById('City-Alert').style.display = 'block';
+        document.getElementById('City-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('city').style.borderColor = '';
     }
     if (document.getElementById('streetHouseRoom').value.length > 45) {
         document.getElementById('streetHouseRoom').style.borderColor = 'red';
-        document.getElementById('SHR-Alert').style.display = 'block';
+        document.getElementById('SHR-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('streetHouseRoom').style.borderColor = '';
     }
     if (document.getElementById('index').value.length > 45) {
         document.getElementById('index').style.borderColor = 'red';
-        document.getElementById('Index-Alert').style.display = 'block';
+        document.getElementById('Index-Alert').hidden = false;
         isValidForm = false;
     } else {
         document.getElementById('index').style.borderColor = '';
@@ -637,5 +661,5 @@ function downloadFile(button) {
 }
 
 function hideAlert(div) {
-    div.style.display = 'none';
+    div.hidden = true;
 }
