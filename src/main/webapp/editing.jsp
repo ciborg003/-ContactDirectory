@@ -1,8 +1,7 @@
- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta http-equiv="Content-Type" content="text/html">
         <meta charset="UTF-8">
@@ -12,7 +11,7 @@
     <body>
         <div id="wrap">
             <input type="hidden" id="popUpAction" value="none">
-<!----------------------------------PopUp PHONE---------------------------------->
+            <!----------------------------------PopUp PHONE---------------------------------->
             <div id="popupPhone">
                 <div class="container-fluid">
                     <h4>Editing Phone Number</h4>
@@ -54,7 +53,7 @@
                     </div>
                 </div>
             </div>
-<!-------------------------PopUp ATTACHMENT---------------------------------->
+            <!-------------------------PopUp ATTACHMENT---------------------------------->
             <div id="popupAttachment">
                 <h4>Editing Attachment</h4>
                 <div class="container">
@@ -78,8 +77,8 @@
                 </div>
             </div>
             <jsp:include page="popup-submit.jsp"></jsp:include>
-        </div>
-<!------------------------------FORM---------------------------------->
+            </div>
+            <!------------------------------FORM---------------------------------->
         <jsp:include page="navbar.jsp" />
         <h1 class="h1">Editing Contact</h1> 
         <form id="form" action="ServletController?action=${action}" method="POST" enctype="multipart/form-data">
@@ -113,7 +112,7 @@
                     <div class="alert alert-danger" id="LN-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Last Name</strong> contains Cyrillic and Latin. Length from 1 to 20
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Patronymic</span>
                         <input name="patronymic" id="patronymic" type="text" class="form-control" placeholder="Patronymic" value="${contact.patronymic}">
@@ -121,7 +120,7 @@
                     <div class="alert alert-danger" id="MN-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Patronymic</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Birthday</span>
                         <input name="birthday" type="date" class="form-control" value="${contact.dob}" max="${maxDate}">
@@ -176,7 +175,7 @@
                     <div class="alert alert-danger" id="WSite-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Web site</strong> Length from 0 to 100
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Email</span>
                         <input name="email" id="email" type="text" class="form-control" value="${contact.email}" placeholder="Email">
@@ -184,7 +183,7 @@
                     <div class="alert alert-danger" id="Email-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Email</strong> example: someEmail@gmail.com Length from 0 to 45
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Current Work</span>
                         <input name="job" id="job" type="text" class="form-control" value="${contact.job}" placeholder="Current Work">
@@ -202,7 +201,7 @@
                     </div><div class="alert alert-danger" id="Country-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Country</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">City</span>
                         <input name="city" id="city" type="text" class="form-control" value="${contact.city}" placeholder="City">
@@ -210,7 +209,7 @@
                     <div class="alert alert-danger" id="City-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>City</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Street House Room</span>
                         <input name="streetHouseRoom" id="streetHouseRoom" type="text" class="form-control" value="${contact.streetHouseRoom}" placeholder="Street, House, Room">
@@ -218,7 +217,7 @@
                     <div class="alert alert-danger" id="SHR-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Street</strong> Length from 0 to 45
                     </div>
-                    
+
                     <div class="input-group">
                         <span class="input-group-addon">Index</span>
                         <input name="index" id="index" type="text" class="form-control" value="${contact.indexNumber}" placeholder="Index">
@@ -226,7 +225,7 @@
                     <div class="alert alert-danger" id="Index-Alert" onclick="hideAlert(this)" hidden="">
                         <strong>Nationality</strong> Length from 0 to 45
                     </div>
-                    
+
                 </div>
             </div>
             <div id="save">
@@ -235,7 +234,7 @@
                 </button>
             </div>
 
-<!------------------------------------PHONE TABLE----------------------------------------->
+            <!------------------------------------PHONE TABLE----------------------------------------->
             <div id="editingPhones">
                 <div id="phoneActions">
                     <div class="btn-group">
@@ -294,7 +293,7 @@
                 </table>
             </div>
 
-<!------------------------------------ATTACHMENT TABLE----------------------------------------->
+            <!------------------------------------ATTACHMENT TABLE----------------------------------------->
             <div id="editingAttachments">
                 <div id="attachmentActions">
                     <button type="button" class="btn btn-info btn-md" onclick="createAttachment()">
@@ -313,33 +312,32 @@
                     <tbody id="attachmentList">
                         <c:forEach items="${attachmentList}" var="attachment">
                             <tr class="tr-custom" id="${attachment.id}">
-                        <input type="hidden" name="attachmentAction" value="none">
-<!--                        <input type="hidden" name="loadDate" value="${attachment.loadDate}">
-                        <input type="hidden" name="attachmentComment" value="${attachment.comment}">
-                        <input type="hidden" name="filePath" value="${attachment.url}">
-                        <input type="hidden" name="fileName" value="${attachment.fileName}">
-                        <input type="hidden" name="idAttachment" value="${attachment.id}">-->
-                        <input type="hidden" name="attachment" value="${attachment}">
-                        <td hidden="">
-                            <input type="file" name="fileStorage">
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="fa fa-download"></span> ${attachment.fileName}</button>
-                        </td>
-                        <td>
-                            <h6>${attachment.loadDate}</h6>
-                        </td>
-                        <td>
-                            <h6>${attachment.comment}</h6>
-                        </td>
-                        <td>
-                            <div class='ctrlBtn btn-group'>
-                                <button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>
-                                <button type="button" class='btn btn-info' onclick='deleteAttachment(this)'>Delete</button>
-                            </div>
-                        </td>
-                        </tr>
-                    </c:forEach>
+                                <input type="hidden" name="attachmentAction" value="none">
+                                <input type="hidden" name="loadDate" value="${attachment.loadDate}">
+                                <input type="hidden" name="attachmentComment" value="${attachment.comment}">
+                                <input type="hidden" name="fileName" value="${attachment.fileName}">
+                                <input type="hidden" name="filePath" value="${attachment.url}">
+                                <input type="hidden" name="idAttachment" value="${attachment.id}">
+                                <td hidden="">
+                                    <input type="file" name="fileStorage">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info" onclick="downloadFile(this)"><span class="fa fa-download"></span> ${attachment.fileName}</button>
+                                </td>
+                                <td>
+                                    <h6>${attachment.loadDate}</h6>
+                                </td>
+                                <td>
+                                    <h6>${attachment.comment}</h6>
+                                </td>
+                                <td>
+                                    <div class='ctrlBtn btn-group'>
+                                        <button type="button" class="btn btn-info btn-md" onclick="editAttachment(this)">Edit</button>
+                                        <button type="button" class='btn btn-info' onclick='deleteAttachment(this)'>Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
             </div>
