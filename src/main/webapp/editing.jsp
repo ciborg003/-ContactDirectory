@@ -121,9 +121,10 @@
                         <strong>Patronymic</strong> contains Cyrillic and Latin. Length from 0 to 20
                     </div>
 
-                    <div class="input-group">
-                        <span class="input-group-addon">Birthday</span>
-                        <input name="birthday" type="date" class="form-control" value="${contact.dob}" max="${maxDate}">
+                    <div class="form-group row" style="margin-left: 0px; margin-right: 0px">
+                        <span class="input-group-addon col-1">Birthday</span>
+                        <!--<label class="col-form-label col-2" for="birthday">Birthday</label>-->
+                        <input name="birthday" id="birthday" type="date" class="form-control col-11" value="${contact.dob}" max="${maxDate}">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Gender</span>
